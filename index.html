@@ -232,26 +232,47 @@ function buildFullWidthTab(chords, style, lvl) {
   return out;
 }
 function buildFretboard(title, scaleNotes, tonic) {
-  var sNames = ["e|","B|","G|","D|","A|","E|"];
   var tIdx = NOTES.indexOf(norm(tonic));
-  var startF = (tIdx >= 5) ? tIdx - 1 : tIdx; if (startF < 0) startF = 0;
-  var endF = startF + 4;
-  var head = "   ";
-  for (var f = startF; f <= endF; f++) head += (f < 10 ? " " + f + "  " : " " + f + " ");
-  var grid = head + "\n";
+  var W = 940, H = 195, x0 = 42, y0 = 26, fw = 56, sh = 26;
+  var svg = '<svg viewBox="0 0 ' + W + ' ' + H + '" style="width:100%;height:auto;display:block;background:#1e1b18;border-radius:8px;border:1px solid #475569;">';
+  svg += '<rect x="' + x0 + '" y="' + y0 + '" width="' + (15 * fw) + '" height="' + (5 * sh) + '" fill="#2d231a"/>';
+  svg += '<rect x="' + (x0 - 4) + '" y="' + y0 + '" width="6" height="' + (5 * sh) + '" fill="#f8fafc"/>';
+  var dots = new Array(3, 5, 7, 9, 15);
+  for (var d = 0; d < dots.length; d++) {
+    var df = dots.slice(d, d + 1).pop();
+    svg += '<circle cx="' + (x0 + (df - 0.5) * fw) + '" cy="' + (y0 + 2.5 * sh) + '" r="6" fill="#94a3b8" opacity="0.35"/>';
+  }
+  svg += '<circle cx="' + (x0 + 11.5 * fw) + '" cy="' + (y0 + 1.5 * sh) + '" r="6" fill="#94a3b8" opacity="0.45"/>';
+  svg += '<circle cx="' + (x0 + 11.5 * fw) + '" cy="' + (y0 + 3.5 * sh) + '" r="6" fill="#94a3b8" opacity="0.45"/>';
+  for (var f = 0; f <= 15; f++) {
+    var fx = x0 + f * fw;
+    svg += '<line x1="' + fx + '" y1="' + y0 + '" x2="' + fx + '" y2="' + (y0 + 5 * sh) + '" stroke="#94a3b8" stroke-width="' + (f === 0 ? 4 : 2) + '"/>';
+    if (f > 0) svg += '<text x="' + (fx - fw / 2) + '" y="' + (H - 8) + '" fill="#94a3b8" font-size="12" font-family="Arial" text-anchor="middle">' + f + '</text>';
+  }
+  var sLabels = ["e","B","G","D","A","E"];
   for (var s = 0; s < 6; s++) {
-    var line = sNames.slice(s, s + 1).pop(), o = OPEN_STR.slice(s, s + 1).pop();
-    for (var fr = startF; fr <= endF; fr++) {
+    var sy = y0 + s * sh;
+    svg += '<line x1="' + (x0 - 4) + '" y1="' + sy + '" x2="' + (x0 + 15 * fw) + '" y2="' + sy + '" stroke="#cbd5e1" stroke-width="' + (1 + s * 0.35) + '"/>';
+    svg += '<text x="16" y="' + (sy + 4) + '" fill="#cbd5e1" font-size="13" font-weight="bold" font-family="Arial">' + sLabels.slice(s, s + 1).pop() + '</text>';
+    var o = OPEN_STR.slice(s, s + 1).pop();
+    for (var fr = 0; fr <= 15; fr++) {
       var nn = NOTES.slice((o + fr) % 12, ((o + fr) % 12) + 1).pop(), inS = false;
       for (var n = 0; n < scaleNotes.length; n++) if (norm(scaleNotes.slice(n, n + 1).pop()) === nn) inS = true;
       if (inS) {
         var diff = (NOTES.indexOf(nn) - tIdx + 12) % 12;
-        line += (diff === 0 ? "[R]" : ((diff === 3 || diff === 4) ? "(3)" : (diff === 7 ? "(5)" : ((diff === 10 || diff === 11) ? "(7)" : " • ")))) + "|";
-      } else line += "---|";
+        var col = "#475569", lbl = nn;
+        if (diff === 0) { col = "#dc2626"; lbl = "R"; }
+        else if (diff === 3 || diff === 4) { col = "#0284c7"; lbl = "3"; }
+        else if (diff === 7) { col = "#059669"; lbl = "5"; }
+        else if (diff === 10 || diff === 11) { col = "#d97706"; lbl = "7"; }
+        var cx = (fr === 0) ? (x0 - 12) : (x0 + (fr - 0.5) * fw);
+        svg += '<circle cx="' + cx + '" cy="' + sy + '" r="10.5" fill="' + col + '" stroke="#fff" stroke-width="1.5"/>';
+        svg += '<text x="' + cx + '" y="' + (sy + 4) + '" fill="#fff" font-size="11" font-weight="bold" font-family="Arial" text-anchor="middle">' + lbl + '</text>';
+      }
     }
-    grid += line + "\n";
   }
-  return '<div style="background:#0f172a;padding:8px 10px;border-radius:8px;margin-bottom:8px;border:1px solid #334155;"><div style="font-size:12px;font-weight:bold;color:#38bdf8;margin-bottom:4px;">' + title + ' (Cases ' + startF + '-' + endF + ')</div><div class="tab" style="margin:4px 0;font-size:12px;">' + grid + '</div></div>';
+  svg += '</svg>';
+  return '<div style="background:#0f172a;padding:10px;border-radius:10px;margin-bottom:10px;border:1px solid #334155;"><div style="font-size:13px;font-weight:bold;color:#38bdf8;margin-bottom:6px;">' + title + ' — Manche Complet (Cases 0 à 15)</div><div style="overflow-x:auto;">' + svg + '</div></div>';
 }
 function genProg(rnd) {
   var ks=["C","G","D","A","E","F"], ss=["Fingerstyle","Neo-Soul","Blues-Rock","Pop-Blues"], is=["Stratocaster","Les Paul","Acoustique"], ls=["Débutant","Intermédiaire","Avancé"];
@@ -281,7 +302,7 @@ function genProg(rnd) {
   var h = '<div class="card"><span class="badge">'+st+'</span><span class="badge">'+bars+' mesures</span><span class="badge">'+inst+'</span><span class="badge">'+lvl+'</span><h2>'+pat.t+' ('+k+' / '+kd.rel+')</h2>';
   h += '<h3>1. Accords & Notes Cibles</h3><div>'+cHtml+'</div>';
   h += '<h3>2. Tablature Complète Pleine Largeur ('+bars+' Mesures)</h3><div class="tab">'+tab+'</div>';
-  h += '<h3>3. Schémas des Gammes ([R]=Fondamentale, (3)=Tierce, (5)=Quinte, (7)=7e)</h3>';
+  h += '<h3>3. Manche Complet (Cases 0-15) : R=Fondamentale, 3=Tierce, 5=Quinte, 7=7e</h3>';
   h += buildFretboard("Pentatonique Majeure de " + k, kd.pMaj, kd.r);
   h += buildFretboard("Gamme Blues / Mineure de " + kd.rel, kd.blues, kd.rel.replace("m",""));
   h += buildFretboard("Mode Dorien (Soul / Fusion)", kd.dor, kd.dor.slice(0,1).pop());
@@ -307,18 +328,54 @@ function genExo(rnd) {
   h += '<h2>'+ex.t+'</h2><div class="tab">'+tb+'</div><p>🎯 '+ex.tip+'</p><div class="tone-tip">🎸 <strong>Config '+inst+' :</strong> '+INST[inst]+'</div></div>';
   document.getElementById("exo-res").innerHTML = h;
 }
-var aCtx = null, tOsc = null, mInt = null, bInt = null, bMode = "", sInt = null, bpm = 80, beat = 0;
-function initA() { if (!aCtx) { var C = window.AudioContext || window.webkitAudioContext; if (C) aCtx = new C(); } if (aCtx && aCtx.state === "suspended") aCtx.resume(); }
-function playTone(f, txt) { initA(); stopTone(); if (!aCtx) return; tOsc = aCtx.createOscillator(); var g = aCtx.createGain(); tOsc.type = "triangle"; tOsc.frequency.value = f; g.gain.value = 0.25; tOsc.connect(g); g.connect(aCtx.destination); tOsc.start(0); document.getElementById("tun-msg").innerHTML = "🔊 " + txt + " (" + f + " Hz)"; }
-function stopTone() { if (tOsc) { try { tOsc.stop(0); } catch(e) {} tOsc = null; } document.getElementById("tun-msg").innerHTML = ""; }
+var aCtx = null, tOsc = null, mInt = null, bInt = null, bMode = "", sInt = null, bpm = 80, step8 = 0, noiseBuf = null;
+function initA() {
+  if (!aCtx) { var C = window.AudioContext || window.webkitAudioContext; if (C) aCtx = new C(); }
+  if (aCtx && aCtx.state === "suspended") aCtx.resume();
+  if (aCtx && !noiseBuf) {
+    noiseBuf = aCtx.createBuffer(1, aCtx.sampleRate * 0.25, aCtx.sampleRate);
+    var d = noiseBuf.getChannelData(0);
+    for (var i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+  }
+}
+function playBassNote(freq, dur) {
+  if (!aCtx) return;
+  var now = aCtx.currentTime;
+  var osc = aCtx.createOscillator(), flt = aCtx.createBiquadFilter(), g = aCtx.createGain();
+  osc.type = "sawtooth"; osc.frequency.setValueAtTime(freq, now);
+  flt.type = "lowpass"; flt.frequency.setValueAtTime(520, now); flt.frequency.exponentialRampToValueAtTime(190, now + dur);
+  g.gain.setValueAtTime(0.01, now); g.gain.linearRampToValueAtTime(0.45, now + 0.02); g.gain.exponentialRampToValueAtTime(0.001, now + dur);
+  osc.connect(flt); flt.connect(g); g.connect(aCtx.destination);
+  osc.start(now); osc.stop(now + dur);
+}
+function playKick() {
+  if (!aCtx) return;
+  var now = aCtx.currentTime, o = aCtx.createOscillator(), g = aCtx.createGain();
+  o.type = "sine"; o.frequency.setValueAtTime(145, now); o.frequency.exponentialRampToValueAtTime(42, now + 0.14);
+  g.gain.setValueAtTime(0.65, now); g.gain.exponentialRampToValueAtTime(0.001, now + 0.16);
+  o.connect(g); g.connect(aCtx.destination); o.start(now); o.stop(now + 0.16);
+}
+function playSnare() {
+  if (!aCtx || !noiseBuf) return;
+  var now = aCtx.currentTime, src = aCtx.createBufferSource(), flt = aCtx.createBiquadFilter(), g = aCtx.createGain();
+  src.buffer = noiseBuf; flt.type = "bandpass"; flt.frequency.value = 1400;
+  g.gain.setValueAtTime(0.32, now); g.gain.exponentialRampToValueAtTime(0.001, now + 0.14);
+  src.connect(flt); flt.connect(g); g.connect(aCtx.destination); src.start(now); src.stop(now + 0.14);
+}
+function playHat() {
+  if (!aCtx || !noiseBuf) return;
+  var now = aCtx.currentTime, src = aCtx.createBufferSource(), flt = aCtx.createBiquadFilter(), g = aCtx.createGain();
+  src.buffer = noiseBuf; flt.type = "highpass"; flt.frequency.value = 7000;
+  g.gain.setValueAtTime(0.11, now); g.gain.exponentialRampToValueAtTime(0.001, now + 0.045);
+  src.connect(flt); flt.connect(g); g.connect(aCtx.destination); src.start(now); src.stop(now + 0.045);
+}
 function chgBpm(d) { bpm = Math.max(45, Math.min(200, bpm + d)); document.getElementById("bpm-lbl").innerHTML = bpm + " BPM"; if (mInt) { toggleMetro(); toggleMetro(); } if (bInt) { var m = bMode; stopBacking(); toggleBacking(m); } }
-function beep(freq, dur, vol, type) { if (!aCtx) return; var o = aCtx.createOscillator(), g = aCtx.createGain(); o.type = type || "triangle"; o.frequency.value = freq; g.gain.value = vol; o.connect(g); g.connect(aCtx.destination); o.start(0); o.stop(aCtx.currentTime + dur); }
 function toggleMetro() {
   initA(); var btn = document.getElementById("btn-met");
   if (mInt) { clearInterval(mInt); mInt = null; btn.innerHTML = "⏱ Métro"; btn.className = "btn btn-sm btn-sec"; return; }
   btn.innerHTML = "⏹ Stop Métro"; btn.className = "btn btn-sm btn-del";
-  beep(880, 0.04, 0.2);
-  mInt = setInterval(function() { beep(880, 0.04, 0.2); }, Math.round(60000 / bpm));
+  playHat();
+  mInt = setInterval(function() { playHat(); }, Math.round(60000 / bpm));
 }
 function stopBacking() {
   if (bInt) { clearInterval(bInt); bInt = null; }
@@ -327,27 +384,85 @@ function stopBacking() {
   document.getElementById("btn-drum").innerHTML = "🥁 Batterie seule"; document.getElementById("btn-drum").className = "btn btn-sm";
 }
 function toggleBacking(mode) {
-  initA();
-  var wasSame = (bInt && bMode === mode);
-  stopBacking();
-  if (wasSame) return;
-  bMode = mode; beat = 0;
+  initA(); var wasSame = (bInt && bMode === mode); stopBacking(); if (wasSame) return;
+  bMode = mode; step8 = 0;
   if (mode === "bass") { document.getElementById("btn-back").innerHTML = "⏹ Stop"; document.getElementById("btn-back").className = "btn btn-sm btn-del"; }
   else { document.getElementById("btn-drum").innerHTML = "⏹ Stop"; document.getElementById("btn-drum").className = "btn btn-sm btn-del"; }
-  function step() {
-    var b4 = beat % 4;
-    if (b4 === 0 || b4 === 2) beep(65, 0.08, 0.35, "sine");
-    if (b4 === 1 || b4 === 3) beep(220, 0.06, 0.18, "square");
-    beep(1800, 0.015, 0.06, "triangle");
-    if (mode === "bass" && (b4 === 0 || b4 === 2)) {
-      var barIdx = Math.floor(beat / 4) % curProgRoots.length;
+  function tick8() {
+    var s = step8 % 8;
+    playHat();
+    if (s === 0 || s === 4 || s === 5) playKick();
+    if (s === 2 || s === 6) playSnare();
+    if (mode === "bass" && (s === 0 || s === 4 || s === 7)) {
+      var barIdx = Math.floor(step8 / 8) % curProgRoots.length;
       var note = curProgRoots.slice(barIdx, barIdx + 1).pop();
-      beep(BASS_FREQ[note] || 82.41, 0.38, 0.30, "triangle");
+      playBassNote(BASS_FREQ[note] || 82.41, (60 / bpm) * 1.6);
     }
-    beat++;
+    step8++;
   }
-  step();
-  bInt = setInterval(step, Math.round(60000 / bpm));
+  tick8();
+  bInt = setInterval(tick8, Math.round(30000 / bpm));
+}
+function playTone(f, txt) { initA(); stopTone(); if (!aCtx) return; tOsc = aCtx.createOscillator(); var g = aCtx.createGain(); tOsc.type = "triangle"; tOsc.frequency.value = f; g.gain.value = 0.25; tOsc.connect(g); g.connect(aCtx.destination); tOsc.start(0); document.getElementById("tun-msg").innerHTML = "🔊 " + txt + " (" + f + " Hz)"; }
+function stopTone() { if (tOsc) { try { tOsc.stop(0); } catch(e) {} tOsc = null; } document.getElementById("tun-msg").innerHTML = ""; }
+var micStream = null, analyser = null, tunAnim = null;
+function initTunerUI() {
+  var c = document.getElementById("p-tun").getElementsByClassName("card").item(0);
+  if (document.getElementById("needle-box")) return;
+  var div = document.createElement("div");
+  div.id = "needle-box";
+  div.style.cssText = "background:#0f172a;border:1px solid #334155;border-radius:10px;padding:12px;margin-bottom:12px;text-align:center;";
+  div.innerHTML = '<button class="btn btn-save" id="btn-mic" onclick="toggleMicTuner()">🎙️ Activer Accordeur Micro</button>' +
+    '<div id="tun-note" style="font-size:36px;font-weight:bold;color:#38bdf8;margin:8px 0;">--</div>' +
+
+    '<div style="position:relative;height:24px;background:#1e293b;border-radius:12px;border:1px solid #475569;margin:8px auto;max-width:340px;">' +
+    '<div style="position:absolute;left:50%;top:0;bottom:0;width:3px;background:#10b981;margin-left:-1.5px;"></div>' +
+    '<div id="tun-pin" style="position:absolute;left:50%;top:2px;width:16px;height:18px;border-radius:9px;background:#38bdf8;margin-left:-8px;"></div></div>' +
+    '<div id="tun-cents" style="font-size:13px;color:#94a3b8;">Jouez une corde devant le micro</div>';
+  c.insertBefore(div, c.getElementsByTagName("button").item(0));
+}
+function toggleMicTuner() {
+  initA(); var btn = document.getElementById("btn-mic");
+  if (micStream) {
+    cancelAnimationFrame(tunAnim);
+    var tr = micStream.getTracks(); for (var i = 0; i < tr.length; i++) tr.slice(i, i + 1).pop().stop();
+    micStream = null; btn.innerHTML = "🎙️ Activer Accordeur Micro"; btn.className = "btn btn-save"; return;
+  }
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { alert("Micro non disponible sur ce navigateur."); return; }
+  navigator.mediaDevices.getUserMedia({audio:true}).then(function(stream) {
+    micStream = stream; btn.innerHTML = "⏹ Couper Micro"; btn.className = "btn btn-del";
+    var src = aCtx.createMediaStreamSource(stream);
+    analyser = aCtx.createAnalyser(); analyser.fftSize = 2048; src.connect(analyser);
+    var buf = new Float32Array(analyser.fftSize);
+    function loop() {
+      analyser.getFloatTimeDomainData(buf);
+      var rms = 0; for (var i = 0; i < buf.length; i++) rms += buf[i] * buf[i];
+      if (Math.sqrt(rms / buf.length) > 0.015) {
+        var bestO = -1, bestC = 0;
+        for (var o = 60; o < 700; o++) {
+          var corr = 0; for (var j = 0; j < 800; j++) corr += buf[j] * buf[j + o];
+          if (corr > bestC) { bestC = corr; bestO = o; }
+        }
+        if (bestO > 0) {
+          var freq = aCtx.sampleRate / bestO;
+          var midi = Math.round(12 * (Math.log(freq / 440) / Math.LN2)) + 69;
+          var exact = 440 * Math.pow(2, (midi - 69) / 12);
+          var cents = Math.round(1200 * Math.log(freq / exact) / Math.LN2);
+          var nName = NOTES.slice(((midi % 12) + 12) % 12, (((midi % 12) + 12) % 12) + 1).pop();
+          var pin = document.getElementById("tun-pin"), nEl = document.getElementById("tun-note");
+          nEl.innerHTML = nName;
+          var pct = Math.max(5, Math.min(95, 50 + cents));
+          pin.style.left = pct + "%";
+          var ok = Math.abs(cents) <= 5;
+          pin.style.background = ok ? "#10b981" : "#f59e0b";
+          nEl.style.color = ok ? "#10b981" : "#38bdf8";
+          document.getElementById("tun-cents").innerHTML = (ok ? "✓ Accordé ! (" : (cents > 0 ? "Trop haut +" : "Trop bas ")) + cents + " cents)";
+        }
+      }
+      tunAnim = requestAnimationFrame(loop);
+    }
+    loop();
+  }).catch(function() { alert("Autorisez l'accès au micro dans Safari."); });
 }
 function toggleScroll() {
   var btn = document.getElementById("btn-scr");
@@ -367,6 +482,7 @@ function renderFavs() {
   document.getElementById("fav-list").innerHTML = h || '<div class="card"><p>Aucun favori enregistré.</p></div>';
 }
 window.onresize = function() { if (document.getElementById("p-prog").className.indexOf("active") !== -1) genProg(false); };
+initTunerUI();
 renderFavs();
 genProg(false);
 genExo(false);
