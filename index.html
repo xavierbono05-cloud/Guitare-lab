@@ -317,17 +317,72 @@ function genExo(rnd) {
     document.getElementById("ex-theme").value = ts.slice(Math.floor(Math.random()*ts.length)).shift();
   }
   var inst = document.getElementById("ex-inst").value, lvl = document.getElementById("ex-lvl").value, th = document.getElementById("ex-theme").value;
-  var pool = [];
-  for (var i = 0; i < EXOS.length; i++) { var it = EXOS.slice(i,i+1).pop(); if (it.th === th) pool.push(it); }
-  if (pool.length === 0) pool = EXOS;
-  var ex = pool.slice(Math.floor(Math.random()*pool.length)).shift();
-  var sh = Math.floor(Math.random()*4);
-  var tb = (sh > 0 && th !== "Harmoniques") ? "(Transposition +"+sh+" cases)\n" + ex.tab.replace(/([1-9])/g, function(m){return String(parseInt(m,10)+sh);}) : ex.tab;
-  curItem = {title: ex.t + " (" + ex.st + ")", meta: inst + " • " + th + " • " + lvl, tab: tb, tip: ex.tip};
-  var h = '<div class="card"><span class="badge">'+th+'</span><span class="badge">'+ex.st+'</span><span class="badge">'+inst+'</span><span class="badge">'+lvl+' • '+ex.bpm+'</span>';
-  h += '<h2>'+ex.t+'</h2><div class="tab">'+tb+'</div><p>🎯 '+ex.tip+'</p><div class="tone-tip">🎸 <strong>Config '+inst+' :</strong> '+INST[inst]+'</div></div>';
+  var rootIdx = Math.floor(Math.random() * 12);
+  var rootName = NOTES.slice(rootIdx, rootIdx + 1).pop();
+  var baseFret = (rootIdx >= 5) ? rootIdx : rootIdx + 5;
+  var w = window.innerWidth || 768;
+  var perRow = (w >= 680) ? 4 : 2;
+  var chars = Math.max(12, Math.floor(((w - 65) / 7.8 - perRow - 2) / perRow));
+  var dash = ""; for (var d = 0; d < chars; d++) dash += "-";
+  var sNames = ["e|","B|","G|","D|","A|","E|"];
+  var barsData = [];
+
+  for (var b = 0; b < 4; b++) {
+    var col = [dash, dash, dash, dash, dash, dash];
+    function put(row, ratio, val) {
+      var pos = Math.max(1, Math.min(chars - val.length - 1, Math.floor(chars * ratio)));
+      var s = col.slice(row, row + 1).pop();
+      col.splice(row, 1, s.substring(0, pos) + val + s.substring(pos + val.length));
+    }
+    var f0 = String(baseFret), f2 = String(baseFret + 2), f3 = String(baseFret + 3), f4 = String(baseFret + 4), f5 = String(baseFret + 5);
+    if (th === "Fingerpicking") {
+      var bass = (b % 2 === 0) ? f0 : f3;
+      put(5, 0.05, bass); put(3, 0.28, f2); put(5, 0.52, bass);
+      put(1, 0.76, (b === 3) ? f0 : (Math.random() > 0.5 ? f3 : f0));
+      if (lvl !== "Débutant") put(2, 0.16, f2);
+    } else if (th === "Hybrid Picking") {
+      put(4, 0.05, f0); put(2, 0.25, f2); put(1, 0.45, f3);
+      put(0, 0.65, (lvl === "Avancé") ? f3 + "h" + f5 + "p" + f3 : f0 + "h" + f3);
+    } else if (th === "Bends & Vibrato") {
+      if (b < 3) {
+        var r = Math.floor(Math.random() * 3);
+        put(r, 0.10, f0); put(r, 0.35, f3);
+        put(r, 0.65, (Math.random() > 0.5) ? f2 + "b" + f4 : f3 + "p" + f0);
+      } else { put(1, 0.15, f3 + "b" + f5 + "~"); put(2, 0.65, f2 + "~"); }
+    } else if (th === "Double-Stops") {
+      var sA = (b % 2 === 0) ? 1 : 2, sB = sA + 1;
+      put(sA, 0.10, f0); put(sB, 0.10, f0);
+      put(sA, 0.50, f0 + "/" + f3); put(sB, 0.50, f0 + "/" + f2);
+      if (lvl !== "Débutant") { put(sA, 0.82, f0); put(sB, 0.82, f0); }
+    } else if (th === "Harmoniques") {
+      var hFret = (b % 2 === 0) ? "<12>" : "<7>";
+      put(5, 0.05, "0"); put(2, 0.28, hFret); put(1, 0.52, hFret); put(0, 0.76, (lvl === "Avancé") ? "<5>" : "<12>");
+    } else {
+      put(5, 0.05, f0); put(3, 0.05, f0); put(2, 0.05, f0); put(1, 0.05, f0);
+      put(2, 0.35, "x"); put(1, 0.35, "x");
+      put(1, 0.62, (lvl === "Débutant") ? f0 : f0 + "h" + f3);
+      put(2, 0.85, "x"); put(1, 0.85, "x");
+    }
+    barsData.push(col);
+  }
+  var tb = "Tonalité : " + rootName + "m / " + rootName + " (Position case " + baseFret + ")\n";
+  for (var m = 0; m < 4; m += perRow) {
+    for (var r = 0; r < 6; r++) {
+      var line = sNames.slice(r, r + 1).pop();
+      for (var k = 0; k < perRow; k++) line += barsData.slice(m + k, m + k + 1).pop().slice(r, r + 1).pop() + "|";
+      tb += line + "\n";
+    }
+    tb += "\n";
+  }
+  var bpmTxt = (lvl === "Débutant") ? "65-80 BPM" : (lvl === "Intermédiaire" ? "80-105 BPM" : "105-130 BPM");
+  var tipTxt = "Travaillez lentement au métronome en " + rootName + " (case " + baseFret + "). " + INST[inst];
+  curItem = {title: "Étude " + th + " en " + rootName + " (" + lvl + ")", meta: inst + " • " + th + " • " + bpmTxt, tab: tb, tip: tipTxt};
+  var h = '<div class="card"><span class="badge">' + th + '</span><span class="badge">Tonalité : ' + rootName + '</span><span class="badge">' + inst + '</span><span class="badge">' + lvl + ' • ' + bpmTxt + '</span>';
+  h += '<h2>Étude Générée : ' + th + ' en ' + rootName + '</h2><div class="tab">' + tb + '</div>';
+  h += '<div class="tone-tip">🎸 <strong>Consigne & Réglage ' + inst + ' :</strong> ' + tipTxt + '</div></div>';
   document.getElementById("exo-res").innerHTML = h;
 }
+
 var aCtx = null, tOsc = null, mInt = null, bInt = null, bMode = "", sInt = null, bpm = 80, step8 = 0, noiseBuf = null;
 function initA() {
   if (!aCtx) { var C = window.AudioContext || window.webkitAudioContext; if (C) aCtx = new C(); }
