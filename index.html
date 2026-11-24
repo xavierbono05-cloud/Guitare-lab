@@ -170,23 +170,18 @@
   <div class="nav-btn" onclick="goTab('tun', this)">🎵 Accordeur</div>
   <div class="nav-btn" onclick="goTab('fav', this)">⭐ Favoris</div>
 </nav>
- <script>
+<script>
 window.onerror = function(msg, url, line) {
   alert("Erreur ligne " + line + " : " + msg);
 };
 </script>
 <script>
-
-<script>
- window.onerror = function(msg, url, line) {
-  alert("Erreur ligne " + line + " : " + msg);
-};
-
-var var NOTES = new Array("C","C#","D","D#","E","F","F#","G","G#","A","A#","B");
+var NOTES = new Array("C","C#","D","D#","E","F","F#","G","G#","A","A#","B");
 var NOTES_SHARP = new Array("C","C#","D","D#","E","F","F#","G","G#","A","A#","B");
 var NOTES_FLAT = new Array("C","Db","D","Eb","E","F","Gb","G","Ab","A","Bb","B");
 var OPEN_STR = new Array(4, 11, 7, 2, 9, 4);
 var BASS_FREQ = {C:65.41,"C#":69.30,D:73.42,"D#":77.78,E:82.41,F:87.31,"F#":92.50,G:98.00,"G#":103.83,A:110.00,"A#":116.54,B:123.47};
+
 
 var KEYS = {
   C:{idx:0,flat:false}, Db:{idx:1,flat:true}, D:{idx:2,flat:false}, Eb:{idx:3,flat:true},
