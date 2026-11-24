@@ -193,7 +193,7 @@ function buildDynamicKey(kName, modeKey) {
   var chMap = {};
   for (var d = 1; d <= 7; d++) {
     var idx = (d - 1) % scaleNotes.length, rn = scaleNotes.slice(idx).shift(), q = mObj.chords.slice(idx).shift();
-    chMap[String(d)] = { n: rn + q, f: getRealChordShape(rn, q) };
+    chMap[String(d)] = { n: rn + q, f: getVariedChordShape(rn, q, false) };
   }
   var blues = new Array(0,3,5,6,7,10).map(function(s){ return scaleArr.slice((rIdx+s)%12).shift(); });
   return { r: kName, ch: chMap, blues: blues, modeLabel: mObj.label, scaleNotes: scaleNotes };
