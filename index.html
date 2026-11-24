@@ -162,6 +162,27 @@ function anatomy(name) {
   var idx = NOTES.indexOf(norm(r)); if (idx < 0) idx = 0;
   return {R:r, T:NOTES.slice((idx+(min?3:4))%12).shift(), Q:NOTES.slice((idx+7)%12).shift(), S:NOTES.slice((idx+(name.indexOf("maj")!==-1?11:10))%12).shift()};
 }
+function getRealChordShape(rootNote, qual) {
+  var rIdx = NOTES.indexOf(norm(rootNote));
+  if (rIdx < 0) rIdx = 0;
+  var rE = (rIdx - 4 + 12) % 12; // Frette sur corde E grave
+  var rA = (rIdx - 9 + 12) % 12; // Frette sur corde A
+  if (qual === 'm7b5') return 'x-' + rA + '-' + (rA + 1) + '-' + rA + '-' + (rA + 1) + '-x';
+  if (qual === 'dim7') return 'x-' + (rA || 12) + '-' + ((rA || 12) + 1) + '-' + ((rA || 12) - 1) + '-' + ((rA || 12) + 1) + '-x';
+  if (rE <= 5) {
+    if (qual === 'maj7') return rE + '-x-' + (rE + 1) + '-' + (rE + 1) + '-' + rE + '-x';
+    if (qual === 'm7') return rE + '-x-' + rE + '-' + rE + '-' + rE + '-x';
+    if (qual === '7') return rE + '-x-' + rE + '-' + (rE + 1) + '-' + rE + '-x';
+    if (qual === 'mMaj7') return rE + '-x-' + (rE + 1) + '-' + rE + '-' + rE + '-x';
+    if (qual === 'maj7#5') return rE + '-x-' + (rE + 1) + '-' + (rE + 1) + '-' + (rE + 1) + '-x';
+  }
+  if (qual === 'maj7') return 'x-' + rA + '-' + (rA + 2) + '-' + (rA + 1) + '-' + (rA + 2) + '-' + rA;
+  if (qual === 'm7') return 'x-' + rA + '-' + (rA + 2) + '-' + rA + '-' + (rA + 1) + '-' + rA;
+  if (qual === '7') return 'x-' + rA + '-' + (rA + 2) + '-' + rA + '-' + (rA + 2) + '-' + rA;
+  if (qual === 'mMaj7') return 'x-' + rA + '-' + (rA + 2) + '-' + (rA + 1) + '-' + (rA + 1) + '-' + rA;
+  return 'x-' + rA + '-' + (rA + 3) + '-' + (rA + 1) + '-' + (rA + 1) + '-x';
+}
+
 function buildDynamicKey(kName, modeKey) {
   var kObj = KEYS[kName] || KEYS.C, mObj = MODES[modeKey] || MODES.ionian;
   var scaleArr = kObj.flat ? NOTES_FLAT : NOTES_SHARP, rIdx = kObj.idx, scaleNotes = new Array();
@@ -169,15 +190,15 @@ function buildDynamicKey(kName, modeKey) {
     var iv = mObj.intervals.slice(i, i + 1).pop();
     scaleNotes.push(scaleArr.slice((rIdx + iv) % 12).shift());
   }
-  var SHAPES = {maj7:'x-3-2-0-0-0',m7:'x-0-2-0-1-0','7':'3-2-0-0-0-1',m7b5:'x-1-2-1-2-x',mMaj7:'x-0-2-1-1-0','maj7#5':'x-3-2-1-0-0',dim7:'x-1-2-0-2-0'};
   var chMap = {};
   for (var d = 1; d <= 7; d++) {
     var idx = (d - 1) % scaleNotes.length, rn = scaleNotes.slice(idx).shift(), q = mObj.chords.slice(idx).shift();
-    chMap[String(d)] = { n: rn + q, f: SHAPES[q] || 'x-3-2-0-1-0' };
+    chMap[String(d)] = { n: rn + q, f: getRealChordShape(rn, q) };
   }
   var blues = new Array(0,3,5,6,7,10).map(function(s){ return scaleArr.slice((rIdx+s)%12).shift(); });
   return { r: kName, ch: chMap, blues: blues, modeLabel: mObj.label, scaleNotes: scaleNotes };
 }
+
 function buildFullWidthTab(chords, lvl) {
   var w = window.innerWidth || 768, perRow = (w >= 680) ? 4 : 2;
   var charsPerBar = Math.max(12, Math.floor(((w - 65) / 7.8 - perRow - 2) / perRow)), dash = "";
