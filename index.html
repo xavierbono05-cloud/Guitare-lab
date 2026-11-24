@@ -319,7 +319,7 @@ function genProg(rnd) {
   var stKey = document.getElementById('styleSelect').value, instKey = document.getElementById('instSelect').value;
   var lvlVal = document.getElementById('lvlSelect').value, lvlLabel = lvlVal === 'deb' ? 'Débutant' : (lvlVal === 'int' ? 'Intermédiaire' : 'Avancé');
   var bars = parseInt((document.getElementById('pg-bars') || {value:8}).value, 10) || 8;
-  var patObj = PATS[stKey] || PATS.emmanuel;  if (patObj.bpm && !aMode) { bpm = patObj.bpm; document.getElementById("bpm-lbl").textContent = bpm + " BPM";
+  var patObj = PATS[stKey] || PATS.emmanuel;  if (patObj.bpm && !aMode) { bpm = patObj.bpm; document.getElementById("bpm-lbl").textContent = bpm + " BPM";}
   var activeMode = (mSel === 'auto') ? patObj.mode : (mSel === 'major' ? 'ionian' : (mSel === 'minor' ? 'aeolian' : (mSel === 'modal' ? 'dorian' : 'blues')));
   var kd = buildDynamicKey(k, activeMode), gObj = GUITARS[instKey] || GUITARS.strat;
   var cHtml = '', chObjs = new Array(), seen = {};
