@@ -232,18 +232,32 @@ function anatomy(name) {
   return {R:r, T:NOTES[(idx+(min?3:4))%12], Q:NOTES[(idx+7)%12], S:NOTES[(idx+(name.indexOf("maj")!==-1?11:10))%12]};
 }
 function buildDynamicKey(kName, modeKey) {
-  var kObj = KEYS[kName] || KEYS.C, mObj = MODES[modeKey] || MODES.ionian;
-  var scaleArr = kObj.flat ? NOTES_FLAT : NOTES_SHARP, rIdx = kObj.idx, scaleNotes = new Array();
-  for (var i = 0; i < mObj.intervals.length; i++) scaleNotes.push(scaleArr[(rIdx + mObj.intervals[i]) % 12]);
-  var SHAPES = {maj7:'x-3-2-0-0-0',m7:'x-0-2-0-1-0','7':'3-2-0-0-0-1',m7b5:'x-1-2-1-2-x',mMaj7:'x-0-2-1-1-0','maj7#5':'x-3-2-1-0-0',dim7:'x-1-2-0-2-0'};
+  var kObj = KEYS[kName] || KEYS.C;
+  var mObj = MODES[modeKey] || MODES.ionian;
+  var scaleArr = kObj.flat ? NOTES_FLAT : NOTES_SHARP;
+  var rIdx = kObj.idx;
+  var scaleNotes = new Array();
+  for (var i = 0; i < mObj.intervals.length; i++) {
+    var iv = mObj.intervals.slice(i, i + 1).pop();
+    scaleNotes.push(scaleArr.slice((rIdx + iv) % 12, ((rIdx + iv) % 12) + 1).pop());
+  }
+  var SHAPES = {
+    maj7: 'x-3-2-0-0-0', m7: 'x-0-2-0-1-0', '7': '3-2-0-0-0-1', m7b5: 'x-1-2-1-2-x',
+    mMaj7: 'x-0-2-1-1-0', 'maj7#5': 'x-3-2-1-0-0', dim7: 'x-1-2-0-2-0'
+  };
   var chMap = {};
   for (var d = 1; d <= 7; d++) {
-    var rn = scaleNotes[(d - 1) % scaleNotes.length], q = mObj.chords[(d - 1) % mObj.chords.length];
-    chMap[d] = { n: rn + q, f: SHAPES[q] || 'x-3-2-0-1-0' };
+    var idx = (d - 1) % scaleNotes.length;
+    var rn = scaleNotes.slice(idx, idx + 1).pop();
+    var q = mObj.chords.slice(idx, idx + 1).pop();
+    chMap[String(d)] = { n: rn + q, f: SHAPES[q] || 'x-3-2-0-1-0' };
   }
-  var blues = new Array(0,3,5,6,7,10).map(function(s){ return scaleArr[(rIdx+s)%12]; });
+  var blues = new Array(0, 3, 5, 6, 7, 10).map(function(s) {
+    return scaleArr.slice((rIdx + s) % 12, ((rIdx + s) % 12) + 1).pop();
+  });
   return { r: kName, ch: chMap, blues: blues, modeLabel: mObj.label, scaleNotes: scaleNotes };
 }
+
 function buildFullWidthTab(chords, style, lvl) {
   var w = window.innerWidth || 768, perRow = (w >= 680) ? 4 : 2;
   var charsPerBar = Math.max(12, Math.floor(((w - 65) / 7.8 - perRow - 2) / perRow)), dash = "";
@@ -330,31 +344,30 @@ function genProg(rnd) {
   var stKey = document.getElementById('styleSelect').value, instKey = document.getElementById('instSelect').value;
   var lvlVal = document.getElementById('lvlSelect').value, lvlLabel = lvlVal === 'deb' ? 'Débutant' : (lvlVal === 'int' ? 'Intermédiaire' : 'Avancé');
   var bars = parseInt((document.getElementById('pg-bars') || {value:8}).value, 10) || 8;
-    var patObj = PATS[stKey] || PATS.emmanuel;
-  if (patObj.bpm && !aMode) { bpm = patObj.bpm; document.getElementById("bpm-lbl").textContent = bpm + " BPM"; }
-
-  if (patObj.bpm && !aMode) { bpm = patObj.bpm; document.getElementById("bpm-lbl").textContent = bpm + " BPM"; }
-
-  if (patObj.bpm && !aMode) { bpm = patObj.bpm; document.getElementById("bpm-lbl").textContent = bpm + " BPM"; }
+      var patObj = PATS[stKey] || PATS.emmanuel;
+  if (patObj.bpm && typeof aMode !== 'undefined' && !aMode) {
+    bpm = patObj.bpm;
+    document.getElementById("bpm-lbl").textContent = bpm + " BPM";
+  }
   var activeMode = (mSel === 'auto') ? patObj.mode : (mSel === 'major' ? 'ionian' : (mSel === 'minor' ? 'aeolian' : (mSel === 'modal' ? 'dorian' : 'blues')));
   var kd = buildDynamicKey(k, activeMode), gObj = GUITARS[instKey] || GUITARS.strat;
   var cHtml = '', chObjs = new Array(), seen = {};
   curProgRoots = new Array();
-    var fretShift = (instKey === 'lespaul') ? 7 : (instKey === 'strat' ? 3 : 0);
+  var fretShift = (instKey === 'lespaul') ? 7 : (instKey === 'strat' ? 3 : 0);
   for (var b = 0; b < bars; b++) {
     var idxDeg = b % patObj.deg.length;
-    var deg = patObj.deg.slice(idxDeg, idxDeg + 1).pop();
-    var baseC = kd.ch[deg] || kd.ch[1];
+    var deg = String(patObj.deg.slice(idxDeg, idxDeg + 1).pop());
+    var baseC = kd.ch[deg] || kd.ch['1'];
     var shiftedF = baseC.f.split('-').map(function(v) {
       if (v === 'x') return 'x';
-      var num = parseInt(v, 10) + fretShift;
-      return String(num);
+      return String(parseInt(v, 10) + fretShift);
     }).join('-');
     var c = { n: baseC.n, f: shiftedF };
     var an = anatomy(c.n);
     chObjs.push(c); curProgRoots.push(norm(an.R));
     if (!seen[deg]) {
       seen[deg] = true;
+
       cHtml += '<div class="chord-box"><small>Degré '+deg+'</small><strong>'+c.n+'</strong><div style="font-size:12px;">'+c.f+'</div><span class="deg d-R">R:'+an.R+'</span><span class="deg d-3">3:'+an.T+'</span><span class="deg d-5">5:'+an.Q+'</span><span class="deg d-7">7:'+an.S+'</span></div>';
     }
   }
