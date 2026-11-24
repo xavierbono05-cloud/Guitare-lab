@@ -171,109 +171,79 @@
   <div class="nav-btn" onclick="goTab('fav', this)">⭐ Favoris</div>
 </nav>
 <script>
-var NOTES = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
+var var NOTES = new Array("C","C#","D","D#","E","F","F#","G","G#","A","A#","B");
+var NOTES_SHARP = new Array("C","C#","D","D#","E","F","F#","G","G#","A","A#","B");
+var NOTES_FLAT = new Array("C","Db","D","Eb","E","F","Gb","G","Ab","A","Bb","B");
 var OPEN_STR = new Array(4, 11, 7, 2, 9, 4);
 var BASS_FREQ = {C:65.41,"C#":69.30,D:73.42,"D#":77.78,E:82.41,F:87.31,"F#":92.50,G:98.00,"G#":103.83,A:110.00,"A#":116.54,B:123.47};
-var NOTES_SHARP = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
-var NOTES_FLAT  = ['C','Db','D','Eb','E','F','Gb','G','Ab','A','Bb','B'];
 
 var KEYS = {
-  C:  { idx: 0,  flat: false }, Db: { idx: 1,  flat: true  },
-  D:  { idx: 2,  flat: false }, Eb: { idx: 3,  flat: true  },
-  E:  { idx: 4,  flat: false }, F:  { idx: 5,  flat: true  },
-  Gb: { idx: 6,  flat: true  }, G:  { idx: 7,  flat: false },
-  Ab: { idx: 8,  flat: true  }, A:  { idx: 9,  flat: false },
-  Bb: { idx: 10, flat: true  }, B:  { idx: 11, flat: false }
+  C:{idx:0,flat:false}, Db:{idx:1,flat:true}, D:{idx:2,flat:false}, Eb:{idx:3,flat:true},
+  E:{idx:4,flat:false}, F:{idx:5,flat:true}, Gb:{idx:6,flat:true}, G:{idx:7,flat:false},
+  Ab:{idx:8,flat:true}, A:{idx:9,flat:false}, Bb:{idx:10,flat:true}, B:{idx:11,flat:false}
 };
 
 var MODES = {
-  ionian:      { label: 'Majeur (Ionien)',      intervals:, chords: ['maj7','m7','m7','maj7','7','m7','m7b5'] },
-  aeolian:     { label: 'Mineur (Éolien)',      intervals:, chords: ['m7','m7b5','maj7','m7','m7','maj7','7'] },
-  dorian:      { label: 'Dorien (Mineur Jazz)', intervals:, chords: ['m7','m7','maj7','7','m7','m7b5','maj7'] },
-  mixolydian:  { label: 'Mixolydien (Blues/Funk)',intervals:[0,2,4,5,7,9,10],chords: ['7','m7','m7b5','maj7','m7','m7','maj7'] },
-  lydian:      { label: 'Lydien (Prog/Math)',   intervals:, chords: ['maj7','7','m7','m7b5','maj7','m7','m7'] },
-  harmonic_min:{ label: 'Mineur Harmonique',    intervals:, chords: ['mMaj7','m7b5','maj7#5','m7','7','maj7','dim7'] },
-  phrygian_dom:{ label: 'Phrygien Dominant',    intervals:, chords: ['7','maj7','m7b5','m7','dim7','maj7#5','m7'] },
-  blues:       { label: 'Blues Mineur',         intervals:,   chords: ['7','7','7','7','7','7','7'] }
+  ionian:      {label:'Majeur (Ionien)',      intervals:new Array(0,2,4,5,7,9,11), chords:new Array('maj7','m7','m7','maj7','7','m7','m7b5')},
+  aeolian:     {label:'Mineur (Éolien)',      intervals:new Array(0,2,3,5,7,8,10), chords:new Array('m7','m7b5','maj7','m7','m7','maj7','7')},
+  dorian:      {label:'Dorien (Mineur Jazz)', intervals:new Array(0,2,3,5,7,9,10), chords:new Array('m7','m7','maj7','7','m7','m7b5','maj7')},
+  mixolydian:  {label:'Mixolydien (Blues/Funk)',intervals:new Array(0,2,4,5,7,9,10),chords:new Array('7','m7','m7b5','maj7','m7','m7','maj7')},
+  lydian:      {label:'Lydien (Prog/Math)',   intervals:new Array(0,2,4,6,7,9,11), chords:new Array('maj7','7','m7','m7b5','maj7','m7','m7')},
+  harmonic_min:{label:'Mineur Harmonique',    intervals:new Array(0,2,3,5,7,8,11), chords:new Array('mMaj7','m7b5','maj7#5','m7','7','maj7','dim7')},
+  phrygian_dom:{label:'Phrygien Dominant',    intervals:new Array(0,1,4,5,7,8,10), chords:new Array('7','maj7','m7b5','m7','dim7','maj7#5','m7')},
+  blues:       {label:'Blues Mineur',         intervals:new Array(0,3,5,6,7,10),   chords:new Array('7','7','7','7','7','7','7')}
 };
 
 var GUITARS = {
-  strat:    { name: 'Fender Stratocaster', minFret: 0, maxFret: 12, prefStrings:, tip: 'Strat : Triades CAGED sur cordes D-G-B, double-stops et cocottes.' },
-  lespaul:  { name: 'Gibson Les Paul',     minFret: 5, maxFret: 15, prefStrings:, tip: 'Les Paul : Positions hautes (sustain), power chords et octaves.' },
-  acoustic: { name: 'Acoustique Folk',     minFret: 0, maxFret: 5,  prefStrings:, tip: 'Acoustique : Cordes à vide, basses alternées (Travis) et harmoniques.' },
-  nylon:    { name: 'Guitare Nylon',       minFret: 0, maxFret: 7,  prefStrings:, tip: 'Nylon : Voicings bossa enrichis, arpèges aux doigts et phrasé flamenco.' }
+  strat:    {name:'Fender Stratocaster', minFret:0, maxFret:12, prefStrings:new Array(2,3,4), tip:'Strat : Triades CAGED sur cordes D-G-B, double-stops et cocottes.'},
+  lespaul:  {name:'Gibson Les Paul',     minFret:5, maxFret:15, prefStrings:new Array(4,5,6), tip:'Les Paul : Positions hautes (sustain), power chords et octaves.'},
+  acoustic: {name:'Acoustique Folk',     minFret:0, maxFret:5,  prefStrings:new Array(1,2,3,4,5,6), tip:'Acoustique : Cordes à vide, basses alternées (Travis) et harmoniques.'},
+  nylon:    {name:'Guitare Nylon',       minFret:0, maxFret:7,  prefStrings:new Array(1,2,3,4,5), tip:'Nylon : Voicings bossa enrichis, arpèges aux doigts et phrasé flamenco.'}
 };
 
 var INST = {
-  "Stratocaster":"Micro Manche ou Pos. 4 • Son clair dynamique (Edge of Breakup), compression légère + reverb Spring.",
-  "Les Paul":"Micro Manche (crémeux) ou Chevalet (mordant) • Overdrive British + delay court 300ms.",
-  "Acoustique":"Jeu aux doigts nus (pulpe + léger ongle) • Palm Mute léger avec la tranche de la paume sur les basses."
+  "strat":"Micro Manche ou Pos. 4 • Son clair dynamique (Edge of Breakup), compression légère + reverb Spring.",
+  "lespaul":"Micro Manche (crémeux) ou Chevalet (mordant) • Overdrive British + delay court 300ms.",
+  "acoustic":"Jeu aux doigts nus (pulpe + léger ongle) • Palm Mute léger avec la tranche de la paume sur les basses.",
+  "nylon":"Jeu aux doigts sans médiator • Attaque douce près de la rosace (bossa) ou près du chevalet (flamenco)."
 };
+
 var PATS = {
-  emmanuel:  { name: 'Tommy Emmanuel (Fingerstyle)', mode: 'mixolydian', deg:, bpm: 108, guitar: 'acoustic', exo: 'fingerpicking' },
-  asato:     { name: 'Mateus Asato (Neo-Soul)',      mode: 'ionian',     deg:, bpm: 80,  guitar: 'strat',    exo: 'doublestops' },
-  igusa:     { name: 'Seiji Igusa (Percussive)',     mode: 'ionian',     deg:, bpm: 96,  guitar: 'acoustic', exo: 'voicings' },
-  ichika:    { name: 'Ichika Nito (Math-Rock)',      mode: 'lydian',     deg:, bpm: 116, guitar: 'strat',    exo: 'harmonics' },
-  bonamassa: { name: 'Joe Bonamassa (Blues-Rock)',   mode: 'blues',      deg:, bpm: 74,  guitar: 'lespaul',  exo: 'solos' },
-  mayer:     { name: 'John Mayer (Pop-Blues)',       mode: 'ionian',     deg:, bpm: 88,  guitar: 'strat',    exo: 'voicings' },
-  knopfler:  { name: 'Mark Knopfler (Finger Rock)',  mode: 'dorian',     deg:, bpm: 104, guitar: 'strat',    exo: 'fingerpicking' },
-  nichols:   { name: 'Jared J. Nichols (Southern)',  mode: 'blues',      deg:, bpm: 92,  guitar: 'lespaul',  exo: 'solos' },
-  mancuso:   { name: 'Matteo Mancuso (Fusion)',      mode: 'dorian',     deg:, bpm: 120, guitar: 'lespaul',  exo: 'hybrid' },
-  wong:      { name: 'Cory Wong (Funk Cocotte)',     mode: 'mixolydian', deg:, bpm: 116, guitar: 'strat',    exo: 'voicings' },
-  hendrix:   { name: 'Hendrix / SRV (Blues R&B)',    mode: 'blues',      deg:, bpm: 84,  guitar: 'strat',    exo: 'doublestops' },
-  sheeran:   { name: 'Ed Sheeran (Pop Percussive)',  mode: 'ionian',     deg:, bpm: 95,  guitar: 'acoustic', exo: 'voicings' },
-  misch:     { name: 'Tom Misch (Chill Neo-Soul)',   mode: 'dorian',     deg:, bpm: 94,  guitar: 'strat',    exo: 'voicings' },
-  henson:    { name: 'Tim Henson (Trap-Prog)',       mode: 'harmonic_min',deg:,bpm: 128, guitar: 'nylon',    exo: 'harmonics' },
-  mason:     { name: 'Brent Mason (Chicken Pickin)', mode: 'mixolydian', deg:, bpm: 132, guitar: 'strat',    exo: 'hybrid' },
-  gilberto:  { name: 'João Gilberto (Bossa Nova)',   mode: 'ionian',     deg:, bpm: 124, guitar: 'nylon',    exo: 'fingerpicking' },
-  page:      { name: 'Jimmy Page (Classic Rock)',    mode: 'mixolydian', deg:, bpm: 96,  guitar: 'lespaul',  exo: 'solos' },
-  gilmour:   { name: 'David Gilmour (Melodic Bends)',mode: 'aeolian',    deg:, bpm: 68,  guitar: 'strat',    exo: 'solos' },
-  reinhardt: { name: 'Django Reinhardt (Manouche)',  mode: 'harmonic_min',deg:,bpm: 145, guitar: 'acoustic', exo: 'hybrid' },
-  montgomery:{ name: 'Wes Montgomery (Jazz Octaves)',mode: 'dorian',     deg:, bpm: 112, guitar: 'lespaul',  exo: 'doublestops' },
-  mayfield:  { name: 'Curtis Mayfield (Soul R&B)',   mode: 'ionian',     deg:, bpm: 86,  guitar: 'strat',    exo: 'doublestops' },
-  marley:    { name: 'Bob Marley (Reggae Skank)',    mode: 'aeolian',    deg:, bpm: 78,  guitar: 'lespaul',  exo: 'voicings' },
-  malmsteen: { name: 'Yngwie Malmsteen (Néoclass.)', mode: 'harmonic_min',deg:,bpm: 138, guitar: 'strat',    exo: 'hybrid' },
-  frusciante:{ name: 'John Frusciante (Funk-Rock)',  mode: 'aeolian',    deg:, bpm: 92,  guitar: 'strat',    exo: 'doublestops' },
-  bensusan:  { name: 'Pierre Bensusan (Celtic)',     mode: 'dorian',     deg:, bpm: 98,  guitar: 'acoustic', exo: 'fingerpicking' },
-  gibbons:   { name: 'Billy Gibbons (Texas Boogie)', mode: 'blues',      deg:, bpm: 114, guitar: 'lespaul',  exo: 'solos' },
-  sharkey:   { name: 'Isaiah Sharkey (Gospel R&B)',  mode: 'ionian',     deg:, bpm: 76,  guitar: 'strat',    exo: 'voicings' },
-  buckley:   { name: 'Jeff Buckley (Alt-Folk)',      mode: 'aeolian',    deg:, bpm: 72,  guitar: 'strat',    exo: 'fingerpicking' },
-  petrucci:  { name: 'John Petrucci (Prog Metal)',   mode: 'phrygian_dom',deg:,bpm: 126, guitar: 'lespaul',  exo: 'hybrid' },
-  pacolucia: { name: 'Paco de Lucía (Flamenco)',     mode: 'phrygian_dom',deg:,bpm: 130, guitar: 'nylon',    exo: 'fingerpicking' },
-  moore:     { name: 'Gary Moore (Slow Blues)',      mode: 'aeolian',    deg:, bpm: 64,  guitar: 'lespaul',  exo: 'solos' },
-  trucks:    { name: 'Derek Trucks (Slide Soul)',    mode: 'mixolydian', deg:, bpm: 84,  guitar: 'lespaul',  exo: 'solos' }
+  emmanuel:  {name:'Tommy Emmanuel (Fingerstyle)', mode:'mixolydian', deg:new Array(1,4,5,1), bpm:108, guitar:'acoustic', exo:'fingerpicking'},
+  asato:     {name:'Mateus Asato (Neo-Soul)',      mode:'ionian',     deg:new Array(4,5,3,6), bpm:80,  guitar:'strat',    exo:'doublestops'},
+  igusa:     {name:'Seiji Igusa (Percussive)',     mode:'ionian',     deg:new Array(1,5,6,4), bpm:96,  guitar:'acoustic', exo:'voicings'},
+  ichika:    {name:'Ichika Nito (Math-Rock)',      mode:'lydian',     deg:new Array(1,2,3,5), bpm:116, guitar:'strat',    exo:'harmonics'},
+  bonamassa: {name:'Joe Bonamassa (Blues-Rock)',   mode:'blues',      deg:new Array(1,1,4,1,5,4,1,5), bpm:74, guitar:'lespaul', exo:'solos'},
+  mayer:     {name:'John Mayer (Pop-Blues)',       mode:'ionian',     deg:new Array(1,6,4,5), bpm:88,  guitar:'strat',    exo:'voicings'},
+  knopfler:  {name:'Mark Knopfler (Finger Rock)',  mode:'dorian',     deg:new Array(1,7,6,7), bpm:104, guitar:'strat',    exo:'fingerpicking'},
+  nichols:   {name:'Jared J. Nichols (Southern)',  mode:'blues',      deg:new Array(1,4,1,5), bpm:92,  guitar:'lespaul',  exo:'solos'},
+  mancuso:   {name:'Matteo Mancuso (Fusion)',      mode:'dorian',     deg:new Array(1,4,7,3), bpm:120, guitar:'lespaul',  exo:'hybrid'},
+  wong:      {name:'Cory Wong (Funk Cocotte)',     mode:'mixolydian', deg:new Array(1,4,1,4), bpm:116, guitar:'strat',    exo:'voicings'},
+
+    hendrix:   {name:'Hendrix / SRV (Blues R&B)',    mode:'blues',       deg:new Array(1,4,5,4), bpm:84,  guitar:'strat',    exo:'doublestops'},
+  sheeran:   {name:'Ed Sheeran (Pop Percussive)',  mode:'ionian',      deg:new Array(1,5,6,4), bpm:95,  guitar:'acoustic', exo:'voicings'},
+  misch:     {name:'Tom Misch (Chill Neo-Soul)',   mode:'dorian',      deg:new Array(2,5,1,6), bpm:94,  guitar:'strat',    exo:'voicings'},
+  henson:    {name:'Tim Henson (Trap-Prog)',       mode:'harmonic_min',deg:new Array(1,6,4,5), bpm:128, guitar:'nylon',    exo:'harmonics'},
+  mason:     {name:'Brent Mason (Chicken Pickin)', mode:'mixolydian',  deg:new Array(1,4,5,1), bpm:132, guitar:'strat',    exo:'hybrid'},
+  gilberto:  {name:'João Gilberto (Bossa Nova)',   mode:'ionian',      deg:new Array(1,2,5,1), bpm:124, guitar:'nylon',    exo:'fingerpicking'},
+  page:      {name:'Jimmy Page (Classic Rock)',    mode:'mixolydian',  deg:new Array(1,7,4,1), bpm:96,  guitar:'lespaul',  exo:'solos'},
+  gilmour:   {name:'David Gilmour (Melodic Bends)',mode:'aeolian',     deg:new Array(1,4,1,5), bpm:68,  guitar:'strat',    exo:'solos'},
+  reinhardt: {name:'Django Reinhardt (Manouche)',  mode:'harmonic_min',deg:new Array(1,6,2,5), bpm:145, guitar:'acoustic', exo:'hybrid'},
+  montgomery:{name:'Wes Montgomery (Jazz Octaves)',mode:'dorian',      deg:new Array(2,5,1,6), bpm:112, guitar:'lespaul',  exo:'doublestops'},
+  mayfield:  {name:'Curtis Mayfield (Soul R&B)',   mode:'ionian',      deg:new Array(1,3,4,5), bpm:86,  guitar:'strat',    exo:'doublestops'},
+  marley:    {name:'Bob Marley (Reggae Skank)',    mode:'aeolian',     deg:new Array(1,4,6,5), bpm:78,  guitar:'lespaul',  exo:'voicings'},
+  malmsteen: {name:'Yngwie Malmsteen (Néoclass.)', mode:'harmonic_min',deg:new Array(1,4,5,1), bpm:138, guitar:'strat',    exo:'hybrid'},
+  frusciante:{name:'John Frusciante (Funk-Rock)',  mode:'aeolian',     deg:new Array(1,5,6,4), bpm:92,  guitar:'strat',    exo:'doublestops'},
+  bensusan:  {name:'Pierre Bensusan (Celtic)',     mode:'dorian',      deg:new Array(1,7,4,1), bpm:98,  guitar:'acoustic', exo:'fingerpicking'},
+  gibbons:   {name:'Billy Gibbons (Texas Boogie)', mode:'blues',       deg:new Array(1,4,5,1), bpm:114, guitar:'lespaul',  exo:'solos'},
+  sharkey:   {name:'Isaiah Sharkey (Gospel R&B)',  mode:'ionian',      deg:new Array(1,3,6,2,5,1), bpm:76, guitar:'strat', exo:'voicings'},
+  buckley:   {name:'Jeff Buckley (Alt-Folk)',      mode:'aeolian',     deg:new Array(1,6,4,5), bpm:72,  guitar:'strat',    exo:'fingerpicking'},
+  petrucci:  {name:'John Petrucci (Prog Metal)',   mode:'phrygian_dom',deg:new Array(1,2,7,1), bpm:126, guitar:'lespaul',  exo:'hybrid'},
+  pacolucia: {name:'Paco de Lucía (Flamenco)',     mode:'phrygian_dom',deg:new Array(1,2,3,2), bpm:130, guitar:'nylon',    exo:'fingerpicking'},
+  moore:     {name:'Gary Moore (Slow Blues)',      mode:'aeolian',     deg:new Array(1,6,4,5), bpm:64,  guitar:'lespaul',  exo:'solos'},
+  trucks:    {name:'Derek Trucks (Slide Soul)',    mode:'mixolydian',  deg:new Array(1,4,1,5), bpm:84,  guitar:'lespaul',  exo:'solos'}
 };
 var LOCKS = { inst: false, lvl: false, key: false, style: false };
-(function patchMusicData() {
-  var mInt = {
-    ionian: '0,2,4,5,7,9,11', aeolian: '0,2,3,5,7,8,10',
-    dorian: '0,2,3,5,7,9,10', mixolydian: '0,2,4,5,7,9,10',
-    lydian: '0,2,4,6,7,9,11', harmonic_min: '0,2,3,5,7,8,11',
-    phrygian_dom: '0,1,4,5,7,8,10', blues: '0,3,5,6,7,10'
-  };
-  for (var m in mInt) {
-    if (MODES[m]) MODES[m].intervals = mInt[m].split(',').map(Number);
-  }
-
-  var gStr = { strat: '2,3,4', lespaul: '4,5,6', acoustic: '1,2,3,4,5,6', nylon: '1,2,3,4,5' };
-  for (var g in gStr) {
-    if (GUITARS[g]) GUITARS[g].prefStrings = gStr[g].split(',').map(Number);
-  }
-
-  var pDeg = {
-    emmanuel: '1,4,5,1', asato: '4,5,3,6', igusa: '1,5,6,4', ichika: '1,2,3,5',
-    bonamassa: '1,1,4,1,5,4,1,5', mayer: '1,6,4,5', knopfler: '1,7,6,7', nichols: '1,4,1,5',
-    mancuso: '1,4,7,3', wong: '1,4,1,4', hendrix: '1,4,5,4', sheeran: '1,5,6,4',
-    misch: '2,5,1,6', henson: '1,6,4,5', mason: '1,4,5,1', gilberto: '1,2,5,1',
-    page: '1,7,4,1', gilmour: '1,4,1,5', reinhardt: '1,6,2,5', montgomery: '2,5,1,6',
-    mayfield: '1,3,4,5', marley: '1,4,6,5', malmsteen: '1,4,5,1', frusciante: '1,5,6,4',
-    bensusan: '1,7,4,1', gibbons: '1,4,5,1', sharkey: '1,3,6,2,5,1', buckley: '1,6,4,5',
-    petrucci: '1,2,7,1', pacolucia: '1,2,3,2', moore: '1,6,4,5', trucks: '1,4,1,5'
-  };
-  for (var p in pDeg) {
-    if (PATS[p]) PATS[p].deg = pDeg[p].split(',').map(Number);
-  }
-})();
 
 function initStyleMenu() {
   var sel = document.getElementById('styleSelect');
@@ -335,8 +305,7 @@ function randomizeSmart() {
     document.getElementById('modeSelect').value = LOCKS.style ? 'auto' : pickRandom(modes);
   }
   updateGuitarTip();
-  if (typeof generateProgression === 'function') generateProgression();
-}
+if (typeof genProg === 'function') genProg(false);
 
 var EXOS = [
   {th:"Fingerpicking",st:"Tommy Emmanuel",t:"Moteur Boum-Tchak & Mélodie",bpm:"65-85 BPM",tab:"e|-------0-----------0---|-------3-----------3---|\nB|-----1-----------1-----|-----0-----------0-----|\nG|-------------0---------|-------------0---------|\nD|-----2-----------2-----|-----0-----------0-----|\nA|-3-------3-------------|-----------------------|\nE|-----------------------|-3-------3-------------|",tip:"Pouce régulier sur 1-2-3-4 en Palm Mute léger."},
@@ -469,41 +438,91 @@ function buildFretboard(title, scaleNotes, tonic) {
   svg += '</svg>';
   return '<div style="background:#0f172a;padding:10px;border-radius:10px;margin-bottom:10px;border:1px solid #334155;"><div style="font-size:13px;font-weight:bold;color:#38bdf8;margin-bottom:6px;">' + title + ' — Manche Complet (Cases 0 à 15)</div><div style="overflow-x:auto;">' + svg + '</div></div>';
 }
-function genProg(rnd) {
-  var ks=["C","G","D","A","E","F"], ss=["Fingerstyle","Neo-Soul","Blues-Rock","Pop-Blues"], is=["Stratocaster","Les Paul","Acoustique"], ls=["Débutant","Intermédiaire","Avancé"];
-  if (rnd) {
-    var rs = ss.slice(Math.floor(Math.random()*ss.length)).shift();
-    document.getElementById("pg-key").value = ks.slice(Math.floor(Math.random()*ks.length)).shift();
-    document.getElementById("pg-style").value = rs;
-    document.getElementById("pg-inst").value = is.slice(Math.floor(Math.random()*is.length)).shift();
-    document.getElementById("pg-lvl").value = ls.slice(Math.floor(Math.random()*ls.length)).shift();
-    document.getElementById("pg-bars").value = (rs === "Blues-Rock") ? "12" : (Math.random() > 0.5 ? "8" : "16");
+function buildDynamicKey(kName, modeKey) {
+  var kObj = KEYS[kName] || KEYS.C;
+  var mObj = MODES[modeKey] || MODES.ionian;
+  var scaleArr = kObj.flat ? NOTES_FLAT : NOTES_SHARP;
+  var rIdx = kObj.idx;
+  var scaleNotes = new Array();
+  for (var i = 0; i < mObj.intervals.length; i++) {
+    scaleNotes.push(scaleArr[(rIdx + mObj.intervals[i]) % 12]);
   }
-  var k = document.getElementById("pg-key").value, st = document.getElementById("pg-style").value, inst = document.getElementById("pg-inst").value, lvl = document.getElementById("pg-lvl").value;
-  var bars = parseInt(document.getElementById("pg-bars").value, 10) || 8;
-  var kd = KEYS[k], plist = PATS[st], pat = plist.slice(Math.floor(Math.random()*plist.length)).shift();
-  var seq = expandSeq(pat.d, bars, st), cHtml = "", chObjs = [], seen = {};
+  var SHAPES = {
+    maj7: 'x-3-2-0-0-0', m7: 'x-0-2-0-1-0', '7': '3-2-0-0-0-1', m7b5: 'x-1-2-1-2-x',
+    mMaj7: 'x-0-2-1-1-0', 'maj7#5': 'x-3-2-1-0-0', dim7: 'x-1-2-0-2-0'
+  };
+  var chMap = {};
+  for (var d = 1; d <= 7; d++) {
+    var rootNote = scaleNotes[(d - 1) % scaleNotes.length];
+    var qual = mObj.chords[(d - 1) % mObj.chords.length];
+    chMap[d] = { n: rootNote + qual, f: SHAPES[qual] || 'x-3-2-0-1-0' };
+  }
+  var relNote = scaleArr[(rIdx + 9) % 12] + 'm';
+  var pMaj = new Array(0,2,4,7,9).map(function(s){ return scaleArr[(rIdx+s)%12]; });
+  var blues = new Array(0,3,5,6,7,10).map(function(s){ return scaleArr[(rIdx+s)%12]; });
+  var dor = new Array(0,2,3,5,7,9,10).map(function(s){ return scaleArr[(rIdx+s)%12]; });
+  return { r: kName, rel: relNote, ch: chMap, pMaj: pMaj, blues: blues, dor: dor, modeLabel: mObj.label, scaleNotes: scaleNotes };
+}
+
+function genProg(rnd) {
+  var styleKeys = Object.keys(PATS);
+  var keyNames = Object.keys(KEYS);
+  var instKeys = Object.keys(GUITARS);
+  var lvls = ['deb', 'int', 'adv'];
+  var modes = ['auto', 'major', 'minor', 'blues', 'modal'];
+
+  if (rnd) {
+    if (!LOCKS.style) document.getElementById('styleSelect').value = pickRandom(styleKeys);
+    var tmpSt = PATS[document.getElementById('styleSelect').value];
+    if (!LOCKS.inst) document.getElementById('instSelect').value = (LOCKS.style && tmpSt) ? tmpSt.guitar : pickRandom(instKeys);
+    if (!LOCKS.lvl) document.getElementById('lvlSelect').value = pickRandom(lvls);
+    if (!LOCKS.key) {
+      document.getElementById('keySelect').value = pickRandom(keyNames);
+      document.getElementById('modeSelect').value = LOCKS.style ? 'auto' : pickRandom(modes);
+    }
+    var barsEl = document.getElementById('pg-bars');
+    if (barsEl && tmpSt) barsEl.value = (tmpSt.mode === 'blues') ? '12' : (Math.random() > 0.5 ? '8' : '16');
+  }
+  updateGuitarTip();
+
+  var k = document.getElementById('keySelect').value;
+  var mSel = document.getElementById('modeSelect').value;
+  var stKey = document.getElementById('styleSelect').value;
+  var instKey = document.getElementById('instSelect').value;
+  var lvlVal = document.getElementById('lvlSelect').value;
+  var lvlLabel = lvlVal === 'deb' ? 'Débutant' : (lvlVal === 'int' ? 'Intermédiaire' : 'Avancé');
+  var bars = parseInt((document.getElementById('pg-bars') || {value:8}).value, 10) || 8;
+
+  var patObj = PATS[stKey] || PATS.emmanuel;
+  var activeMode = (mSel === 'auto') ? patObj.mode : (mSel === 'major' ? 'ionian' : (mSel === 'minor' ? 'aeolian' : (mSel === 'modal' ? 'dorian' : 'blues')));
+  var kd = buildDynamicKey(k, activeMode);
+  var gObj = GUITARS[instKey] || GUITARS.strat;
+
+  var seq = [], cHtml = '', chObjs = [], seen = {};
+  for (var b = 0; b < bars; b++) seq.push(patObj.deg[b % patObj.deg.length]);
   curProgRoots = [];
+
   for (var i = 0; i < seq.length; i++) {
-    var deg = seq.slice(i, i + 1).pop(), c = kd.ch[deg], an = anatomy(c.n);
+    var deg = seq[i], c = kd.ch[deg] || kd.ch[1], an = anatomy(c.n);
     chObjs.push(c); curProgRoots.push(norm(an.R));
     if (!seen[deg]) {
       seen[deg] = true;
       cHtml += '<div class="chord-box"><small>Degré '+deg+'</small><strong>'+c.n+'</strong><div style="font-size:12px;margin:3px 0;">'+c.f+'</div><span class="deg d-R">R:'+an.R+'</span><span class="deg d-3">3:'+an.T+'</span><span class="deg d-5">5:'+an.Q+'</span><span class="deg d-7">7:'+an.S+'</span></div>';
     }
   }
-  var tab = buildFullWidthTab(chObjs, st, lvl);
-  curItem = {title: pat.t + " en " + k + " (" + bars + " mes.)", meta: inst + " • " + st + " • " + lvl, tab: tab, tip: INST[inst]};
-  var h = '<div class="card"><span class="badge">'+st+'</span><span class="badge">'+bars+' mesures</span><span class="badge">'+inst+'</span><span class="badge">'+lvl+'</span><h2>'+pat.t+' ('+k+' / '+kd.rel+')</h2>';
+  var tab = buildFullWidthTab(chObjs, patObj.name, lvlLabel);
+  curItem = {title: patObj.name + ' en ' + k + ' (' + bars + ' mes.)', meta: gObj.name + ' • ' + kd.modeLabel + ' • ' + lvlLabel, tab: tab, tip: INST[instKey]};
+
+  var h = '<div class="card"><span class="badge">'+patObj.name+'</span><span class="badge">'+kd.modeLabel+'</span><span class="badge">'+bars+' mes.</span><span class="badge">'+gObj.name+'</span><h2>'+patObj.name+' ('+k+' — '+kd.modeLabel+')</h2>';
   h += '<h3>1. Accords & Notes Cibles</h3><div>'+cHtml+'</div>';
   h += '<h3>2. Tablature Complète Pleine Largeur ('+bars+' Mesures)</h3><div class="tab">'+tab+'</div>';
   h += '<h3>3. Manche Complet (Cases 0-15) : R=Fondamentale, 3=Tierce, 5=Quinte, 7=7e</h3>';
-  h += buildFretboard("Pentatonique Majeure de " + k, kd.pMaj, kd.r);
-  h += buildFretboard("Gamme Blues / Mineure de " + kd.rel, kd.blues, kd.rel.replace("m",""));
-  h += buildFretboard("Mode Dorien (Soul / Fusion)", kd.dor, kd.dor.slice(0,1).pop());
-  h += '<div class="tone-tip">🎸 <strong>Réglage '+inst+' :</strong> '+INST[inst]+'</div></div>';
-  document.getElementById("prog-res").innerHTML = h;
+  h += buildFretboard('Gamme du Style : ' + k + ' ' + kd.modeLabel, kd.scaleNotes, k);
+  h += buildFretboard('Pentatonique / Blues de ' + k, kd.blues, k);
+  h += '<div class="tone-tip">🎸 <strong>Réglage '+gObj.name+' :</strong> '+INST[instKey]+'</div></div>';
+  document.getElementById('prog-res').innerHTML = h;
 }
+
 function genExo(rnd) {
   var is=["Stratocaster","Les Paul","Acoustique"], ls=["Débutant","Intermédiaire","Avancé"], ts=["Fingerpicking","Hybrid Picking","Bends & Vibrato","Double-Stops","Harmoniques","Voicings & Slap"];
   if (rnd) {
