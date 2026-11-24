@@ -250,31 +250,36 @@ function buildFullWidthTab(chords, style, lvl) {
   for (var d = 0; d < charsPerBar; d++) dash += "-";
   var strNames = new Array("e|","B|","G|","D|","A|","E|"), blocks = new Array();
   for (var i = 0; i < chords.length; i++) {
-    var c = chords[i], p = c.f.split("-"), bStr = (p !== "x") ? 5 : 4, bVal = (p !== "x") ? p : p[1];
+    var c = chords.slice(i, i + 1).pop(), p = c.f.split("-");
+    var e6 = p.slice(0,1).pop(), a5 = p.slice(1,2).pop(), d4 = p.slice(2,3).pop();
+    var g3 = p.slice(3,4).pop(), b2 = p.slice(4,5).pop(), e1 = p.slice(5,6).pop();
+    var bStr = (e6 !== "x") ? 5 : 4, bVal = (e6 !== "x") ? e6 : a5;
     var col = new Array(dash, dash, dash, dash, dash, dash);
     function put(row, ratio, val) {
       if (!val || val === "x") return;
       var pos = Math.max(1, Math.min(charsPerBar - val.length - 1, Math.floor(charsPerBar * ratio)));
-      col[row] = col[row].substring(0, pos) + val + col[row].substring(pos + val.length);
+      var s = col.slice(row, row + 1).pop();
+      col.splice(row, 1, s.substring(0, pos) + val + s.substring(pos + val.length));
     }
-    put(bStr, 0.05, bVal); put(3, 0.25, p[2]); put(2, 0.45, p[3]); put(1, 0.65, p[4]);
-    if (lvl !== "Débutant") put(0, 0.82, p[5]);
+    put(bStr, 0.05, bVal); put(3, 0.25, d4); put(2, 0.45, g3); put(1, 0.65, b2);
+    if (lvl !== "Débutant") put(0, 0.82, e1);
     blocks.push({name: c.n, lines: col});
   }
   var out = "";
   for (var m = 0; m < blocks.length; m += perRow) {
     var sl = blocks.slice(m, m + perRow), hdr = "Mes. " + (m + 1) + "-" + (m + sl.length) + " : ";
-    for (var h = 0; h < sl.length; h++) hdr += sl[h].name + (h < sl.length - 1 ? " | " : "");
+    for (var h = 0; h < sl.length; h++) hdr += sl.slice(h, h + 1).pop().name + (h < sl.length - 1 ? " | " : "");
     out += hdr + "\n";
     for (var r = 0; r < 6; r++) {
-      var rs = strNames[r];
-      for (var b = 0; b < sl.length; b++) rs += sl[b].lines[r] + "|";
+      var rs = strNames.slice(r, r + 1).pop();
+      for (var b = 0; b < sl.length; b++) rs += sl.slice(b, b + 1).pop().lines.slice(r, r + 1).pop() + "|";
       out += rs + "\n";
     }
     out += "\n";
   }
   return out;
 }
+
 function buildFretboard(title, scaleNotes, tonic) {
   var tIdx = NOTES.indexOf(norm(tonic)), W = 940, H = 195, x0 = 42, y0 = 26, fw = 56, sh = 26;
   var svg = '<svg viewBox="0 0 ' + W + ' ' + H + '" style="width:100%;height:auto;display:block;background:#1e1b18;border-radius:8px;border:1px solid #475569;">';
@@ -335,9 +340,25 @@ function genProg(rnd) {
   var kd = buildDynamicKey(k, activeMode), gObj = GUITARS[instKey] || GUITARS.strat;
   var cHtml = '', chObjs = new Array(), seen = {};
   curProgRoots = new Array();
+    var fretShift = (instKey === 'lespaul') ? 7 : (instKey === 'strat' ? 3 : 0);
   for (var b = 0; b < bars; b++) {
-    var deg = patObj.deg[b % patObj.deg.length], c = kd.ch[deg] || kd.ch[1], an = anatomy(c.n);
+    var idxDeg = b % patObj.deg.length;
+    var deg = patObj.deg.slice(idxDeg, idxDeg + 1).pop();
+    var baseC = kd.ch[deg] || kd.ch[1];
+    var shiftedF = baseC.f.split('-').map(function(v) {
+      if (v === 'x') return 'x';
+      var num = parseInt(v, 10) + fretShift;
+      return String(num);
+    }).join('-');
+    var c = { n: baseC.n, f: shiftedF };
+    var an = anatomy(c.n);
     chObjs.push(c); curProgRoots.push(norm(an.R));
+    if (!seen[deg]) {
+      seen[deg] = true;
+      cHtml += '<div class="chord-box"><small>Degré '+deg+'</small><strong>'+c.n+'</strong><div style="font-size:12px;">'+c.f+'</div><span class="deg d-R">R:'+an.R+'</span><span class="deg d-3">3:'+an.T+'</span><span class="deg d-5">5:'+an.Q+'</span><span class="deg d-7">7:'+an.S+'</span></div>';
+    }
+  }
+sh(c); curProgRoots.push(norm(an.R));
     if (!seen[deg]) {
       seen[deg] = true;
       cHtml += '<div class="chord-box"><small>Degré '+deg+'</small><strong>'+c.n+'</strong><div style="font-size:12px;">'+c.f+'</div><span class="deg d-R">R:'+an.R+'</span><span class="deg d-3">3:'+an.T+'</span><span class="deg d-5">5:'+an.Q+'</span><span class="deg d-7">7:'+an.S+'</span></div>';
