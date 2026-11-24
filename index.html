@@ -319,7 +319,12 @@ function genProg(rnd) {
   var stKey = document.getElementById('styleSelect').value, instKey = document.getElementById('instSelect').value;
   var lvlVal = document.getElementById('lvlSelect').value, lvlLabel = lvlVal === 'deb' ? 'Débutant' : (lvlVal === 'int' ? 'Intermédiaire' : 'Avancé');
   var bars = parseInt((document.getElementById('pg-bars') || {value:8}).value, 10) || 8;
-  var patObj = PATS[stKey] || PATS.emmanuel;  
+    var patObj = PATS[stKey] || PATS.emmanuel;
+  if (patObj.bpm && !aMode) { bpm = patObj.bpm; document.getElementById("bpm-lbl").textContent = bpm + " BPM"; }
+
+  if (patObj.bpm && !aMode) { bpm = patObj.bpm; document.getElementById("bpm-lbl").textContent = bpm + " BPM"; }
+
+  if (patObj.bpm && !aMode) { bpm = patObj.bpm; document.getElementById("bpm-lbl").textContent = bpm + " BPM"; }
   var activeMode = (mSel === 'auto') ? patObj.mode : (mSel === 'major' ? 'ionian' : (mSel === 'minor' ? 'aeolian' : (mSel === 'modal' ? 'dorian' : 'blues')));
   var kd = buildDynamicKey(k, activeMode), gObj = GUITARS[instKey] || GUITARS.strat;
   var cHtml = '', chObjs = new Array(), seen = {};
@@ -357,7 +362,8 @@ function genExo(rnd) {
     document.getElementById("ex-theme").value = pickRandom(new Array("Fingerpicking","Hybrid Picking","Bends & Vibrato","Double-Stops","Harmoniques","Voicings & Slap"));
   }
   var inst = document.getElementById("ex-inst").value, lvl = document.getElementById("ex-lvl").value, th = document.getElementById("ex-theme").value;
-  var ex = EXOS;
+   var ex = EXOS.slice(0, 1).pop();
+
   for (var i = 0; i < EXOS.length; i++) if (EXOS[i].th === th) ex = EXOS[i];
   curItem = {title: ex.t + " (" + th + ")", meta: inst + " • " + lvl, tab: ex.tab, tip: ex.tip};
   document.getElementById("exo-res").innerHTML = '<div class="card"><span class="badge">'+th+'</span><span class="badge">'+inst+'</span><span class="badge">'+lvl+'</span><h2>'+ex.t+' ('+ex.bpm+')</h2><div class="tab">'+ex.tab+'</div><div class="tone-tip">💡 '+ex.tip+'</div></div>';
