@@ -69,7 +69,13 @@
       <label>Niveau</label>
       <select id="ex-lvl"><option value="Débutant">Débutant</option>...</select>
       <label>Thème</label>
-      <select id="ex-theme"><option value="Fingerpicking">Fingerpicking / Pouce</option>...</select>
+      <select id="ex-theme"><option value="Fingerpicking">Fingerpicking / Pouce</option>...        <option value="Legato & Tapping">Legato & Tapping</option>
+        <option value="Sweep & Arpèges">Sweep & Arpèges</option>
+        <option value="Cocottes & Funk 16e">Cocottes & Funk 16e</option>
+        <option value="Octaves & Jazz">Octaves & Jazz</option>
+        <option value="Aller-Retour (Alternate)">Aller-Retour (Alternate)</option>
+        <option value="Slide & Open Tuning">Slide & Open Tuning</option>
+</select>
       <div style="margin-top:10px;">
         <button class="btn" onclick="genExo(false)">✨ Générer</button>
         <button class="btn btn-rand" onclick="genExo(true)">🎲 Aléatoire</button>
@@ -346,28 +352,92 @@ function genProg(rnd) {
   h += '<div class="tone-tip">🎸 <strong>Réglage '+gObj.name+' :</strong> '+INST[instKey]+'</div></div>';
   document.getElementById('prog-res').innerHTML = h;
 }
-var EXOS = new Array(
-  {th:"Fingerpicking",t:"Moteur Boum-Tchak & Mélodie",bpm:"80 BPM",tab:"e|-------0-----------0---|\nB|-----1-----------1-----|\nG|-------------0---------|\nD|-----2-----------2-----|\nA|-3-------3-------------|\nE|-----------------------|",tip:"Pouce régulier sur 1-2-3-4 en Palm Mute léger."},
-  {th:"Hybrid Picking",t:"Cascade Hybrid & Legato",bpm:"90 BPM",tab:"e|--------7--7h9p7-------|\nB|------7----------9-7---|\nG|----8----------------8-|\nD|--6--------------------|\nA|-7---------------------|",tip:"Médiator sur les graves, majeur et annulaire sur les aiguës."},
-  {th:"Bends & Vibrato",t:"Phrasé Blues-Rock",bpm:"76 BPM",tab:"e|---------5-------------|\nB|-----5-8---8p5---------|\nG|-7b9-----------7b8r7p5-|",tip:"Visez la justesse du bend puis relâchez vers la tierce mineure."},
-  {th:"Double-Stops",t:"Tierces & Sixtes Glissées",bpm:"84 BPM",tab:"e|-----------------------|\nB|-----5--5/7------8/10--|\nG|-----4--4/6------7/9---|\nD|---6-----------9-------|",tip:"Pression uniforme des deux doigts pendant le glissé."},
-  {th:"Harmoniques",t:"Cascade Harpe (+12 Cases)",bpm:"70 BPM",tab:"e|---------<12>----------|\nB|-----3-----------------|\nG|-0---------------------|",tip:"Index droit effleure la barrette +12 cases, annulaire pince."},
-  {th:"Voicings & Slap",t:"Groove Slap & Extensions",bpm:"92 BPM",tab:"e|-----7-----x---10------|\nB|-----0-----x---8-------|\nG|-----0-----x---11------|\nD|-----5-----x---9-------|",tip:"Frappez les cordes avec le pouce droit sur 2 et 4 (x)."}
-);
-
 function genExo(rnd) {
+  var insts = new Array("Stratocaster","Les Paul","Acoustique");
+  var lvls = new Array("Débutant","Intermédiaire","Avancé");
+  var themes = new Array("Fingerpicking","Hybrid Picking","Bends & Vibrato","Double-Stops","Harmoniques","Voicings & Slap","Legato & Tapping","Sweep & Arpèges","Cocottes & Funk 16e","Octaves & Jazz","Aller-Retour (Alternate)","Slide & Open Tuning");
   if (rnd) {
-    document.getElementById("ex-inst").value = pickRandom(new Array("Stratocaster","Les Paul","Acoustique"));
-    document.getElementById("ex-lvl").value = pickRandom(new Array("Débutant","Intermédiaire","Avancé"));
-    document.getElementById("ex-theme").value = pickRandom(new Array("Fingerpicking","Hybrid Picking","Bends & Vibrato","Double-Stops","Harmoniques","Voicings & Slap"));
+    document.getElementById("ex-inst").value = pickRandom(insts);
+    document.getElementById("ex-lvl").value = pickRandom(lvls);
+    document.getElementById("ex-theme").value = pickRandom(themes);
   }
   var inst = document.getElementById("ex-inst").value, lvl = document.getElementById("ex-lvl").value, th = document.getElementById("ex-theme").value;
-   var ex = EXOS.slice(0, 1).pop();
+  var f = (inst === "Acoustique") ? 0 : (inst === "Stratocaster" ? pickRandom(new Array(3,5,7,8)) : pickRandom(new Array(7,9,10,12)));
+  var f2 = f + 2, f3 = f + 3, f4 = f + 5, tapF = f + 12;
+  var stepTxt = (lvl === "Débutant") ? "Noires & Croches" : (lvl === "Intermédiaire" ? "Croches & Liaisons" : "Doubles-croches & Sauts");
+  var bpmEx = (lvl === "Débutant") ? "65-75 BPM" : (lvl === "Intermédiaire" ? "85-100 BPM" : "110-135 BPM");
+  var lines = new Array("e|","B|","G|","D|","A|","E|"), title = th + " (Pos. " + f + ")", tip = "";
 
-  for (var i = 0; i < EXOS.length; i++) if (EXOS[i].th === th) ex = EXOS[i];
-  curItem = {title: ex.t + " (" + th + ")", meta: inst + " • " + lvl, tab: ex.tab, tip: ex.tip};
-  document.getElementById("exo-res").innerHTML = '<div class="card"><span class="badge">'+th+'</span><span class="badge">'+inst+'</span><span class="badge">'+lvl+'</span><h2>'+ex.t+' ('+ex.bpm+')</h2><div class="tab">'+ex.tab+'</div><div class="tone-tip">💡 '+ex.tip+'</div></div>';
+  for (var m = 0; m < 4; m++) {
+    var sh = (m % 2 === 1) ? 2 : 0;
+    if (th === "Fingerpicking") {
+      tip = "Pouce en Palm Mute sur les graves, index/majeur sur G et B.";
+      lines.push("-------"+(f+sh)+"---------"+(f2+sh)+"-|"); lines.push("---"+(f+sh)+"---------"+(f2+sh)+"-----|");
+      lines.push("-----"+(f+sh)+"---------"+(f+sh)+"---|"); lines.push("---"+(f+sh)+"-----"+(f2+sh)+"-------|");
+      lines.push("-"+(f+sh)+"-----------"+(f+sh)+"-----|"); lines.push("-------"+(f+sh)+"-----------|");
+    } else if (th === "Hybrid Picking") {
+      tip = "Médiator sur la grave, majeur/annulaire pincent les cordes aiguës.";
+      lines.push("---"+(f4+sh)+"-------"+(f3+sh)+"-----|"); lines.push("-------"+(f2+sh)+"-------"+(f+sh)+"-|");
+      lines.push("-----"+(f2+sh)+"-----------|"); lines.push("-"+(f+sh)+"-------"+(f2+sh)+"-------|");
+      lines.push("-----------"+(f+sh)+"-----|"); lines.push("-------------------|");
+    } else if (th === "Bends & Vibrato") {
+      tip = "Poussez avec 3 doigts réunis jusqu'à la hauteur cible sans relâcher.";
+      lines.push("-----------"+(f+sh)+"-------|"); lines.push("---"+(f+sh)+"-"+(f3+sh)+"-------"+(f3+sh)+"~-|");
+      lines.push("-"+(f2+sh)+"b"+(f4+sh)+"r"+(f2+sh)+"-----------|"); lines.push("-------------------|");
+      lines.push("-------------------|"); lines.push("-------------------|");
+    } else if (th === "Double-Stops") {
+      tip = "Gardez les deux doigts posés simultanément lors du glissé (/).";
+      lines.push("-------------------|"); lines.push("-"+(f+sh)+"/"+(f2+sh)+"---"+(f3+sh)+"\\"+(f2+sh)+"-----|");
+      lines.push("-"+(f+sh)+"/"+(f2+sh)+"---"+(f3+sh)+"\\"+(f2+sh)+"-----|"); lines.push("-----"+(f2+sh)+"-------"+(f+sh)+"---|");
+      lines.push("-------------------|"); lines.push("-------------------|");
+    } else if (th === "Harmoniques") {
+      tip = "Effleurez exactement au-dessus de la barrette sans appuyer.";
+      lines.push("-----<12>------<7>-|"); lines.push("---<12>------<7>---|"); lines.push("-<12>------<5>-----|");
+      lines.push("-------------------|"); lines.push("-------------------|"); lines.push("-------------------|");
+    } else if (th === "Legato & Tapping") {
+      tip = "Tapez fermement avec l'index droit (t) et tirez légèrement au relâcher (p).";
+      lines.push("-"+(f+sh)+"h"+(f3+sh)+"t"+(tapF+sh)+"p"+(f3+sh)+"p"+(f+sh)+"----|");
+      lines.push("---------"+(f+sh)+"h"+(f3+sh)+"t"+(tapF+sh)+"p"+(f+sh)+"|");
+      lines.push("-------------------|"); lines.push("-------------------|"); lines.push("-------------------|"); lines.push("-------------------|");
+    } else if (th === "Sweep & Arpèges") {
+      tip = "Un seul mouvement fluide du médiator vers le bas puis vers le haut, sans laisser résonner.";
+      lines.push("-----"+(f+sh)+"h"+(f4+sh)+"p"+(f+sh)+"-------|"); lines.push("---"+(f2+sh)+"---------"+(f2+sh)+"-----|");
+      lines.push("-"+(f3+sh)+"-------------"+(f3+sh)+"---|"); lines.push("-------------------|"); lines.push("-------------------|"); lines.push("-------------------|");
+    } else if (th === "Cocottes & Funk 16e") {
+      tip = "Poignet droit souple en aller-retour continu (16e), relâchez la pression main gauche sur (x).";
+      lines.push("-"+(f2+sh)+"-x-x-"+(f2+sh)+"-x-"+(f4+sh)+"-x-x-|");
+      lines.push("-"+(f2+sh)+"-x-x-"+(f2+sh)+"-x-"+(f3+sh)+"-x-x-|");
+      lines.push("-"+(f+sh)+"-x-x-"+(f+sh)+"-x-"+(f2+sh)+"-x-x-|");
+      lines.push("-------------------|"); lines.push("-------------------|"); lines.push("-------------------|");
+    } else if (th === "Octaves & Jazz") {
+      tip = "Étouffez la corde intermédiaire avec l'index gauche pour ne faire sonner que l'octave.";
+      lines.push("-------------------|"); lines.push("-"+(f2+sh)+"---"+(f4+sh)+"---"+(f2+sh)+"-----|");
+      lines.push("-x---x---x---------|"); lines.push("-"+(f+sh)+"---"+(f2+sh)+"---"+(f+sh)+"-----|");
+      lines.push("-------------------|"); lines.push("-------------------|");
+    } else if (th === "Aller-Retour (Alternate)") {
+      tip = "Strictement bas-haut-bas-haut au médiator, même lors des changements de cordes.";
+      lines.push("---------"+(f+sh)+"-"+(f2+sh)+"-"+(f3+sh)+"-----|");
+      lines.push("---"+(f+sh)+"-"+(f2+sh)+"-"+(f3+sh)+"-------"+(f+sh)+"-|");
+      lines.push("-"+(f+sh)+"-"+(f2+sh)+"---------------|");
+      lines.push("-------------------|"); lines.push("-------------------|"); lines.push("-------------------|");
+    } else if (th === "Slide & Open Tuning") {
+      tip = "Placez le bottleneck exactement au-dessus de la barrette et étouffez derrière le tube.";
+      lines.push("-------------------|"); lines.push("-"+(f+sh)+"/"+(f3+sh)+"~---"+(f4+sh)+"\\"+(f2+sh)+"~---|");
+      lines.push("-"+(f+sh)+"/"+(f3+sh)+"----"+(f4+sh)+"\\"+(f2+sh)+"----|");
+      lines.push("-------------------|"); lines.push("-------------------|"); lines.push("-------------------|");
+    } else {
+      tip = "Frappez les cordes avec le pouce sur les temps 2 et 4 (x).";
+      lines.push("---"+(f2+sh)+"---x---"+(f4+sh)+"---x-|"); lines.push("---"+(f2+sh)+"---x---"+(f3+sh)+"---x-|");
+      lines.push("---"+(f+sh)+"----x---"+(f2+sh)+"---x-|"); lines.push("-------------------|");
+      lines.push("-"+(f+sh)+"---------"+(f+sh)+"-------|"); lines.push("-------------------|");
+    }
+  }
+  var tab = lines.join("\n");
+  curItem = {title: title, meta: inst + " • " + lvl + " • " + stepTxt, tab: tab, tip: tip};
+  document.getElementById("exo-res").innerHTML = '<div class="card"><span class="badge">'+th+'</span><span class="badge">'+inst+'</span><span class="badge">'+lvl+'</span><span class="badge">'+stepTxt+'</span><h2>'+title+' ('+bpmEx+')</h2><div class="tab">'+tab+'</div><div class="tone-tip">💡 '+tip+'</div></div>';
 }
+
+
 
 var aCtx = null, aMode = null, aInt = null, bpm = 90, step = 0, sInt = null, refOsc = null;
 function initACtx() { if (!aCtx) aCtx = new (window.AudioContext || window.webkitAudioContext)(); if (aCtx.state === 'suspended') aCtx.resume(); }
