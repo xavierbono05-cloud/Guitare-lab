@@ -1,9 +1,11 @@
 window.onerror = function(msg, url, line) { alert("Erreur app.js ligne " + line + " : " + msg); };
 var LOCKS = { inst: false, lvl: false, key: false, style: false };
 var curItem = null, curProgRoots = new Array("C","G","A","F"), favs = new Array();
+var lastProgState = null, progBpm = 90, exoBpm = 85;
 try { favs = JSON.parse(localStorage.getItem("glab_f") || "[]"); } catch(e) {}
 
 function pickRandom(arr) { return arr.slice(Math.floor(Math.random() * arr.length)).shift(); }
+  if (!aMode) { bpm = (id === 'exo') ? exoBpm : progBpm; document.getElementById("bpm-lbl").textContent = bpm + " BPM"; }
 function goTab(id, el) {
   var p = document.getElementsByClassName("panel");
   for (var i = 0; i < p.length; i++) p.item(i).className = "panel";
@@ -175,8 +177,8 @@ function genProg(rnd) {
   var stKey = document.getElementById('styleSelect').value, instKey = document.getElementById('instSelect').value;
   var lvlVal = document.getElementById('lvlSelect').value, lvlLabel = lvlVal === 'deb' ? 'Débutant' : (lvlVal === 'int' ? 'Intermédiaire' : 'Avancé');
   var bars = parseInt((document.getElementById('pg-bars') || {value:8}).value, 10) || 8;
-  var patObj = PATS[stKey] || PATS.emmanuel;
-  if (patObj.bpm && typeof aMode !== 'undefined' && !aMode) { bpm = patObj.bpm; document.getElementById("bpm-lbl").textContent = bpm + " BPM"; }
+    var patObj = PATS[stKey] || PATS.emmanuel;
+  if (patObj.bpm) { progBpm = patObj.bpm; if (!aMode) { bpm = progBpm; document.getElementById("bpm-lbl").textContent = bpm + " BPM"; } }
   var activeMode = (mSel === 'auto') ? patObj.mode : (mSel === 'major' ? 'ionian' : (mSel === 'minor' ? 'aeolian' : (mSel === 'modal' ? 'dorian' : 'blues')));
   var kd = buildDynamicKey(k, activeMode), gObj = GUITARS[instKey] || GUITARS.strat;
 
@@ -198,6 +200,8 @@ function genProg(rnd) {
       cHtml += '<div class="chord-box"><small>Degré '+deg+'</small><strong>'+c.n+'</strong><div style="font-size:12px;">'+c.f+'</div><span class="deg d-R">R:'+an.R+'</span><span class="deg d-3">3:'+an.T+'</span><span class="deg d-5">5:'+an.Q+'</span><span class="deg d-7">7:'+an.S+'</span></div>';
     }
   }
+    lastProgState = { chObjs: chObjs, lvlLabel: lvlLabel, groove: patObj.groove };
+
  var tab = buildFullWidthTab(chObjs, lvlLabel, patObj.groove);
 
   curItem = {title: patObj.name + ' en ' + k + ' (' + bars + ' mes.)', meta: gObj.name + ' • ' + kd.modeLabel + ' • ' + lvlLabel, tab: tab, tip: gObj.tip};
@@ -260,12 +264,9 @@ function genExo(rnd) {
       eL+="---"+(f2+sh)+"--x--"+(f4+sh)+"--x-|"; bL+="---"+(f2+sh)+"--x--"+(f3+sh)+"--x-|"; gL+="---"+(f+sh)+"---x--"+(f2+sh)+"--x-|"; dL+="-----------------|"; aL+="-"+(f+sh)+"-------"+(f+sh)+"-----|"; EL+="-----------------|";
     }
   }
-   var exoBpm = (lvl === "Débutant") ? 70 : (lvl === "Intermédiaire" ? 90 : 115);
-  if (typeof aMode !== 'undefined' && !aMode) {
-    bpm = exoBpm;
-    var bLbl = document.getElementById("bpm-lbl");
-    if (bLbl) bLbl.textContent = bpm + " BPM";
-  }
+    exoBpm = (lvl === "Débutant") ? 70 : (lvl === "Intermédiaire" ? 90 : 115);
+  if (!aMode) { bpm = exoBpm; document.getElementById("bpm-lbl").textContent = bpm + " BPM"; }
+
   var rootNote = NOTES.slice((4 + f) % 12).shift();
   var fifthNote = NOTES.slice((4 + f + 7) % 12).shift();
   var qualExo = (th === "Bends & Vibrato" || th === "Double-Stops" || th === "Slide & Open Tuning") ? "7" : "m7";
@@ -463,7 +464,16 @@ function buildAllUI() {
   }
 }
 
-window.onresize = function() { if (document.getElementById("p-prog").className.indexOf("active") !== -1) genProg(false); };
+var lastW = window.innerWidth;
+window.onresize = function() {
+  if (window.innerWidth === lastW) return;
+  lastW = window.innerWidth;
+  if (lastProgState && document.getElementById("p-prog").className.indexOf("active") !== -1) {
+    var tabEl = document.querySelector("#prog-res .tab");
+    if (tabEl) tabEl.textContent = buildFullWidthTab(lastProgState.chObjs, lastProgState.lvlLabel, lastProgState.groove);
+  }
+};
+
 buildAllUI();
 initTunerUI();
 renderFavs();
