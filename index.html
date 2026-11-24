@@ -395,10 +395,10 @@ function genExo(rnd) {
     } else if (th === "Bends & Vibrato") {
       fing = "Main gauche : Doigts 1-2-3 réunis pour pousser la corde G"; tip = "Visez la justesse du ton entier (+2 cases) puis stabilisez le vibrato.";
       eL+="---------"+(f+sh)+"-----|"; bL+="---"+(f+sh)+"-"+(f3+sh)+"-----"+(f3+sh)+"~-|"; gL+="-"+(f2+sh)+"b"+(f4+sh)+"r"+(f2+sh)+"---------|"; dL+="-----------------|"; aL+="-----------------|"; EL+="-----------------|";
-    } else if (th === "Double-Stops") {
-      fing = "Main gauche : Index (1) et Majeur/Annulaire (2-3) en tierces/sixtes"; tip = "Gardez une pression constante pendant le glissé (/) et le retour (\\).";
-      eL+="-----------------|"; bL+="-"+(f+sh)+"/"+(f2+sh)+"---"+(f3+sh)+"\\"+(f2+sh)+"---|"; gL+="-"+(f+sh)+"/"+(f2+sh)+"---"+(f3+sh)+"\\"+(f2+sh)+"---|"; dL+="-----"+(f2+sh)+"-----"+(f+sh)+"-|"; aL+="-----------------|"; EL+="-----------------|";
-    } else if (th === "Harmoniques") {
+       } else if (th === "Double-Stops") {
+      fing = "Main gauche : Index (1) et Majeur/Annulaire (2-3) en tierces/sixtes"; tip = "Gardez une pression constante pendant le glissé (/) et le retour (-).";
+      eL+="-----------------|"; bL+="-"+(f+sh)+"/"+(f2+sh)+"---"+(f3+sh)+"-"+(f2+sh)+"---|"; gL+="-"+(f+sh)+"/"+(f2+sh)+"---"+(f3+sh)+"-"+(f2+sh)+"---|"; dL+="-----"+(f2+sh)+"-----"+(f+sh)+"-|"; aL+="-----------------|"; EL+="-----------------|";
+   } else if (th === "Harmoniques") {
       fing = "Main gauche : Effleurement léger exactement au-dessus de la frette"; tip = "Relâchez le doigt gauche dès que la corde est pincée pour laisser résonner.";
       eL+="-----<12>----<7>-|"; bL+="---<12>----<7>---|"; gL+="-<12>----<5>-----|"; dL+="-----------------|"; aL+="-----------------|"; EL+="-----------------|";
     } else if (th === "Legato & Tapping") {
@@ -418,8 +418,8 @@ function genExo(rnd) {
       eL+="-------"+(f+sh)+"-"+(f2+sh)+"-"+(f3+sh)+"---|"; bL+="---"+(f+sh)+"-"+(f2+sh)+"-"+(f3+sh)+"-----"+(f+sh)+"-|"; gL+="-"+(f+sh)+"-"+(f2+sh)+"-------------|"; dL+="-----------------|"; aL+="-----------------|"; EL+="-----------------|";
     } else if (th === "Slide & Open Tuning") {
       fing = "Main gauche : Bottleneck sur annulaire/auriculaire, index étouffe derrière"; tip = "Placez le tube pile au-dessus de la frette métallique (pas au milieu de la case).";
-      eL+="-----------------|"; bL+="-"+(f+sh)+"/"+(f3+sh)+"~--"+(f4+sh)+"\\"+(f2+sh)+"~-|"; gL+="-"+(f+sh)+"/"+(f3+sh)+"---"+(f4+sh)+"\\"+(f2+sh)+"--|"; dL+="-----------------|"; aL+="-----------------|"; EL+="-----------------|";
-    } else {
+      eL+="-----------------|"; bL+="-"+(f+sh)+"/"+(f3+sh)+"~--"+(f4+sh)+"-"+(f2+sh)+"~-|"; gL+="-"+(f+sh)+"/"+(f3+sh)+"---"+(f4+sh)+"-"+(f2+sh)+"--|"; dL+="-----------------|"; aL+="-----------------|"; EL+="-----------------|";
+} else {
       fing = "Pouce droit (slap temps 2 & 4) + Doigts i-m-a sur accords enrichis"; tip = "Frappez sèchement les cordes avec la tranche du pouce droit sur les temps 2 et 4.";
       eL+="---"+(f2+sh)+"--x--"+(f4+sh)+"--x-|"; bL+="---"+(f2+sh)+"--x--"+(f3+sh)+"--x-|"; gL+="---"+(f+sh)+"---x--"+(f2+sh)+"--x-|"; dL+="-----------------|"; aL+="-"+(f+sh)+"-------"+(f+sh)+"-----|"; EL+="-----------------|";
     }
