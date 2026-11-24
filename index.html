@@ -31,7 +31,7 @@
   .chord-box strong { display: block; font-size: 16px; color: #38bdf8; }
   .deg { display: inline-block; font-size: 10px; padding: 1px 4px; border-radius: 4px; margin: 1px; color: #fff; }
   .d-R { background: #dc2626; } .d-3 { background: #0284c7; } .d-5 { background: #059669; } .d-7 { background: #d97706; }
-  .tab { background: #020617; color: #e2e8f0; font-family: monospace; font-size: 12px; padding: 10px; border-radius: 8px; overflow-x: auto; white-space: pre; line-height: 1.35; border: 1px solid #334155; }
+  .tab { background: #ffffff; color: #0f172a; font-family: monospace; font-size: 12px; font-weight: bold; padding: 12px; border-radius: 8px; overflow-x: auto; white-space: pre; line-height: 1.4; border: 2px solid #94a3b8; }
   .tone-tip { background: rgba(245,158,11,0.12); border-left: 3px solid #f59e0b; padding: 8px 10px; font-size: 12px; margin-top: 10px; border-radius: 4px; }
   .nav { position: fixed; bottom: 0; left: 0; right: 0; background: #1e293b; border-top: 1px solid #334155; display: flex; z-index: 50; }
   .nav-btn { flex: 1; text-align: center; padding: 10px 4px; font-size: 12px; color: #94a3b8; cursor: pointer; }
@@ -42,76 +42,33 @@
 <body>
 <div class="top-bar no-print">
   <h1>🎸 Guitare Lab Pro</h1>
-  <button class="btn btn-sm" id="btn-play" onclick="toggleAudio('band')">▶ Basse+Batterie</button>
-  <button class="btn btn-sm btn-sec" id="btn-drum" onclick="toggleAudio('drum')">🥁 Batterie</button>
-  <button class="btn btn-sm btn-sec" onclick="chgBpm(-5)">-5</button>
+  <button type="button" class="btn btn-sm" id="btn-play" onclick="toggleAudio('band')">▶ Basse+Batterie</button>
+  <button type="button" class="btn btn-sm btn-sec" id="btn-drum" onclick="toggleAudio('drum')">🥁 Batterie</button>
+  <button type="button" class="btn btn-sm btn-sec" onclick="chgBpm(-5)">-5</button>
   <span id="bpm-lbl" style="font-size:12px;font-weight:bold;">90 BPM</span>
-  <button class="btn btn-sm btn-sec" onclick="chgBpm(5)">+5</button>
-  <button class="btn btn-sm btn-sec" id="btn-met" onclick="toggleAudio('met')">⏱ Métro</button>
-  <button class="btn btn-sm btn-rand" id="btn-scr" onclick="toggleScroll()">⬇ Défil.</button>
+  <button type="button" class="btn btn-sm btn-sec" onclick="chgBpm(5)">+5</button>
+  <button type="button" class="btn btn-sm btn-sec" id="btn-met" onclick="toggleAudio('met')">⏱ Métro</button>
+  <button type="button" class="btn btn-sm btn-rand" id="btn-scr" onclick="toggleScroll()">⬇ Défil.</button>
 </div>
-
 <div class="wrap">
-    <div id="p-prog" class="panel active">
-    <div class="card no-print">
-      <h2>🎼 Progressions &amp; Gammes</h2>
-      <div id="prog-controls"></div>
-    </div>
-    <div id="prog-res"></div>
-  </div>
-
-   <div id="p-exo" class="panel">
-    <div class="card no-print">
-      <h2>🎯 Exercices sur Mesure</h2>
-      <!-- Sélecteurs complets : Instrument, Niveau et Thème -->
-      <label>Instrument</label>
-      <select id="ex-inst"><option value="Stratocaster">Fender Stratocaster</option>...</select>
-      <label>Niveau</label>
-      <select id="ex-lvl"><option value="Débutant">Débutant</option>...</select>
-      <label>Thème</label>
-      <select id="ex-theme"><option value="Fingerpicking">Fingerpicking / Pouce</option>...        <option value="Legato & Tapping">Legato & Tapping</option>
-        <option value="Sweep & Arpèges">Sweep & Arpèges</option>
-        <option value="Cocottes & Funk 16e">Cocottes & Funk 16e</option>
-        <option value="Octaves & Jazz">Octaves & Jazz</option>
-        <option value="Aller-Retour (Alternate)">Aller-Retour (Alternate)</option>
-        <option value="Slide & Open Tuning">Slide & Open Tuning</option>
-</select>
-      <div style="margin-top:10px;">
-        <button class="btn" onclick="genExo(false)">✨ Générer</button>
-        <button class="btn btn-rand" onclick="genExo(true)">🎲 Aléatoire</button>
-        <button class="btn btn-sec" onclick="saveFav()">⭐ Sauvegarder</button>
-      </div>
-    </div>
-    <div id="exo-res"></div>
-  </div>
-
-  <div id="p-tun" class="panel">
-    <div class="card">
-      <h2>🎵 Accordeur de Référence (La 440 Hz)</h2>
-      <div id="tun-ui"></div>
-    </div>
-  </div>
-
-  <div id="p-fav" class="panel">
-    <div class="card"><h2>⭐ Mes Favoris (<span id="fav-n">0</span>)</h2></div>
-    <div id="fav-list"></div>
-  </div>
+  <div id="p-prog" class="panel active"><div class="card no-print"><h2>🎼 Progressions &amp; Gammes</h2><div id="prog-controls"></div></div><div id="prog-res"></div></div>
+  <div id="p-exo" class="panel"><div class="card no-print"><h2>🎯 Exercices sur Mesure</h2><div id="exo-controls"></div></div><div id="exo-res"></div></div>
+  <div id="p-tun" class="panel"><div class="card"><h2>🎵 Accordeur Chromatique &amp; La 440 Hz</h2><div id="tun-ui"></div></div></div>
+  <div id="p-fav" class="panel"><div class="card"><h2>⭐ Mes Favoris (<span id="fav-n">0</span>)</h2></div><div id="fav-list"></div></div>
 </div>
-
 <nav class="nav no-print">
   <div class="nav-btn active" onclick="goTab('prog', this)">🎼 Grilles</div>
   <div class="nav-btn" onclick="goTab('exo', this)">🎯 Exercices</div>
   <div class="nav-btn" onclick="goTab('tun', this)">🎵 Accordeur</div>
   <div class="nav-btn" onclick="goTab('fav', this)">⭐ Favoris</div>
 </nav>
-
 <script>
-window.onerror = function(msg, url, line) { alert("Erreur ligne " + line + " : " + msg); };
 var NOTES = new Array("C","C#","D","D#","E","F","F#","G","G#","A","A#","B");
 var NOTES_SHARP = new Array("C","C#","D","D#","E","F","F#","G","G#","A","A#","B");
 var NOTES_FLAT = new Array("C","Db","D","Eb","E","F","Gb","G","Ab","A","Bb","B");
 var OPEN_STR = new Array(4, 11, 7, 2, 9, 4);
-var BASS_FREQ = {C:65.41,"C#":69.30,D:73.42,"D#":77.78,E:82.41,F:87.31,"F#":92.50,G:98.00,"G#":103.83,A:110.00,"A#":116.54,B:123.47};
+var BASS_FREQ = {C:65.41,"C#":69.30,Db:69.30,D:73.42,"D#":77.78,Eb:77.78,E:82.41,F:87.31,"F#":92.50,Gb:92.50,G:98.00,"G#":103.83,Ab:103.83,A:110.00,"A#":116.54,Bb:116.54,B:123.47};
+
 var KEYS = {
   C:{idx:0,flat:false}, Db:{idx:1,flat:true}, D:{idx:2,flat:false}, Eb:{idx:3,flat:true},
   E:{idx:4,flat:false}, F:{idx:5,flat:true}, Gb:{idx:6,flat:true}, G:{idx:7,flat:false},
@@ -130,92 +87,51 @@ var MODES = {
 };
 
 var GUITARS = {
-  strat:    {name:'Fender Stratocaster', minFret:0, maxFret:12, prefStrings:new Array(2,3,4), tip:'Strat : Triades CAGED sur cordes D-G-B, double-stops et cocottes.'},
-  lespaul:  {name:'Gibson Les Paul',     minFret:5, maxFret:15, prefStrings:new Array(4,5,6), tip:'Les Paul : Positions hautes (sustain), power chords et octaves.'},
-  acoustic: {name:'Acoustique Folk',     minFret:0, maxFret:5,  prefStrings:new Array(1,2,3,4,5,6), tip:'Acoustique : Cordes à vide, basses alternées (Travis) et harmoniques.'},
-  nylon:    {name:'Guitare Nylon',       minFret:0, maxFret:7,  prefStrings:new Array(1,2,3,4,5), tip:'Nylon : Voicings bossa enrichis, arpèges aux doigts et phrasé flamenco.'}
+  strat:    {name:'Fender Stratocaster', shift:3, tip:'Strat : Triades CAGED (+3 cases), double-stops et cocottes funk.'},
+  lespaul:  {name:'Gibson Les Paul',     shift:7, tip:'Les Paul : Positions hautes (+7 cases), sustain, bends larges et octaves.'},
+  acoustic: {name:'Acoustique Folk',     shift:0, tip:'Acoustique : Accords ouverts, cordes à vide, picking Travis et harmoniques.'},
+  nylon:    {name:'Guitare Nylon',       shift:0, tip:'Nylon : Voicings bossa enrichis aux doigts et phrasé flamenco.'}
 };
 
-var INST = {
-  strat:"Micro Manche ou Pos. 4 • Son clair dynamique (Edge of Breakup), compression légère + reverb Spring.",
-  lespaul:"Micro Manche (crémeux) ou Chevalet (mordant) • Overdrive British + delay court 300ms.",
-  acoustic:"Jeu aux doigts nus (pulpe + léger ongle) • Palm Mute léger avec la tranche de la paume sur les basses.",
-  nylon:"Jeu aux doigts sans médiator • Attaque douce près de la rosace (bossa) ou près du chevalet (flamenco)."
-};
 var PATS = {
-  emmanuel:  {name:'Tommy Emmanuel (Fingerstyle)', mode:'mixolydian', deg:new Array(1,4,5,1), bpm:108, guitar:'acoustic', exo:'Fingerpicking'},
-  asato:     {name:'Mateus Asato (Neo-Soul)',      mode:'ionian',     deg:new Array(4,5,3,6), bpm:80,  guitar:'strat',    exo:'Double-Stops'},
-  igusa:     {name:'Seiji Igusa (Percussive)',     mode:'ionian',     deg:new Array(1,5,6,4), bpm:96,  guitar:'acoustic', exo:'Voicings & Slap'},
-  ichika:    {name:'Ichika Nito (Math-Rock)',      mode:'lydian',     deg:new Array(1,2,3,5), bpm:116, guitar:'strat',    exo:'Harmoniques'},
-  bonamassa: {name:'Joe Bonamassa (Blues-Rock)',   mode:'blues',      deg:new Array(1,1,4,1,5,4,1,5), bpm:74, guitar:'lespaul', exo:'Bends & Vibrato'},
-  mayer:     {name:'John Mayer (Pop-Blues)',       mode:'ionian',     deg:new Array(1,6,4,5), bpm:88,  guitar:'strat',    exo:'Voicings & Slap'},
-  knopfler:  {name:'Mark Knopfler (Finger Rock)',  mode:'dorian',     deg:new Array(1,7,6,7), bpm:104, guitar:'strat',    exo:'Fingerpicking'},
-  nichols:   {name:'Jared J. Nichols (Southern)',  mode:'blues',      deg:new Array(1,4,1,5), bpm:92,  guitar:'lespaul',  exo:'Bends & Vibrato'},
-  mancuso:   {name:'Matteo Mancuso (Fusion)',      mode:'dorian',     deg:new Array(1,4,7,3), bpm:120, guitar:'lespaul',  exo:'Hybrid Picking'},
-  wong:      {name:'Cory Wong (Funk Cocotte)',     mode:'mixolydian', deg:new Array(1,4,1,4), bpm:116, guitar:'strat',    exo:'Voicings & Slap'},
-  hendrix:   {name:'Hendrix / SRV (Blues R&B)',    mode:'blues',      deg:new Array(1,4,5,4), bpm:84,  guitar:'strat',    exo:'Double-Stops'},
-  sheeran:   {name:'Ed Sheeran (Pop Percussive)',  mode:'ionian',     deg:new Array(1,5,6,4), bpm:95,  guitar:'acoustic', exo:'Voicings & Slap'},
-  misch:     {name:'Tom Misch (Chill Neo-Soul)',   mode:'dorian',     deg:new Array(2,5,1,6), bpm:94,  guitar:'strat',    exo:'Voicings & Slap'},
-  henson:    {name:'Tim Henson (Trap-Prog)',       mode:'harmonic_min',deg:new Array(1,6,4,5),bpm:128, guitar:'nylon',    exo:'Harmoniques'},
-  mason:     {name:'Brent Mason (Chicken Pickin)', mode:'mixolydian', deg:new Array(1,4,5,1), bpm:132, guitar:'strat',    exo:'Hybrid Picking'},
-  gilberto:  {name:'João Gilberto (Bossa Nova)',   mode:'ionian',     deg:new Array(1,2,5,1), bpm:124, guitar:'nylon',    exo:'Fingerpicking'},
-  page:      {name:'Jimmy Page (Classic Rock)',    mode:'mixolydian', deg:new Array(1,7,4,1), bpm:96,  guitar:'lespaul',  exo:'Bends & Vibrato'},
-  gilmour:   {name:'David Gilmour (Melodic Bends)',mode:'aeolian',    deg:new Array(1,4,1,5), bpm:68,  guitar:'strat',    exo:'Bends & Vibrato'},
-  reinhardt: {name:'Django Reinhardt (Manouche)',  mode:'harmonic_min',deg:new Array(1,6,2,5),bpm:145, guitar:'acoustic', exo:'Hybrid Picking'},
-  montgomery:{name:'Wes Montgomery (Jazz Octaves)',mode:'dorian',     deg:new Array(2,5,1,6), bpm:112, guitar:'lespaul',  exo:'Double-Stops'},
-  mayfield:  {name:'Curtis Mayfield (Soul R&B)',   mode:'ionian',     deg:new Array(1,3,4,5), bpm:86,  guitar:'strat',    exo:'Double-Stops'},
-  marley:    {name:'Bob Marley (Reggae Skank)',    mode:'aeolian',    deg:new Array(1,4,6,5), bpm:78,  guitar:'lespaul',  exo:'Voicings & Slap'},
-  malmsteen: {name:'Yngwie Malmsteen (Néoclass.)', mode:'harmonic_min',deg:new Array(1,4,5,1),bpm:138, guitar:'strat',    exo:'Hybrid Picking'},
-  frusciante:{name:'John Frusciante (Funk-Rock)',  mode:'aeolian',    deg:new Array(1,5,6,4), bpm:92,  guitar:'strat',    exo:'Double-Stops'},
-  bensusan:  {name:'Pierre Bensusan (Celtic)',     mode:'dorian',     deg:new Array(1,7,4,1), bpm:98,  guitar:'acoustic', exo:'Fingerpicking'},
-  gibbons:   {name:'Billy Gibbons (Texas Boogie)', mode:'blues',      deg:new Array(1,4,5,1), bpm:114, guitar:'lespaul',  exo:'Bends & Vibrato'},
-  sharkey:   {name:'Isaiah Sharkey (Gospel R&B)',  mode:'ionian',     deg:new Array(1,3,6,2,5,1), bpm:76, guitar:'strat', exo:'Voicings & Slap'},
-  buckley:   {name:'Jeff Buckley (Alt-Folk)',      mode:'aeolian',    deg:new Array(1,6,4,5), bpm:72,  guitar:'strat',    exo:'Fingerpicking'},
-  petrucci:  {name:'John Petrucci (Prog Metal)',   mode:'phrygian_dom',deg:new Array(1,2,7,1),bpm:126, guitar:'lespaul',  exo:'Hybrid Picking'},
-  pacolucia: {name:'Paco de Lucía (Flamenco)',     mode:'phrygian_dom',deg:new Array(1,2,3,2),bpm:130, guitar:'nylon',    exo:'Fingerpicking'},
-  moore:     {name:'Gary Moore (Slow Blues)',      mode:'aeolian',    deg:new Array(1,6,4,5), bpm:64,  guitar:'lespaul',  exo:'Bends & Vibrato'},
-  trucks:    {name:'Derek Trucks (Slide Soul)',    mode:'mixolydian', deg:new Array(1,4,1,5), bpm:84,  guitar:'lespaul',  exo:'Bends & Vibrato'}
+  emmanuel:  {name:'Tommy Emmanuel (Fingerstyle)', mode:'mixolydian', deg:new Array(1,4,5,1), bpm:104, guitar:'acoustic', groove:'jazz'},
+  asato:     {name:'Mateus Asato (Neo-Soul)',      mode:'ionian',     deg:new Array(4,5,3,6), bpm:78,  guitar:'strat',    groove:'funk'},
+  igusa:     {name:'Seiji Igusa (Percussive)',     mode:'ionian',     deg:new Array(1,5,6,4), bpm:92,  guitar:'acoustic', groove:'bossa'},
+  ichika:    {name:'Ichika Nito (Math-Rock)',      mode:'lydian',     deg:new Array(1,2,3,5), bpm:110, guitar:'strat',    groove:'rock'},
+  bonamassa: {name:'Joe Bonamassa (Blues-Rock)',   mode:'blues',      deg:new Array(1,1,4,1,5,4,1,5), bpm:72, guitar:'lespaul', groove:'blues'},
+  mayer:     {name:'John Mayer (Pop-Blues)',       mode:'ionian',     deg:new Array(1,6,4,5), bpm:84,  guitar:'strat',    groove:'blues'},
+  knopfler:  {name:'Mark Knopfler (Finger Rock)',  mode:'dorian',     deg:new Array(1,7,6,7), bpm:100, guitar:'strat',    groove:'rock'},
+  nichols:   {name:'Jared J. Nichols (Southern)',  mode:'blues',      deg:new Array(1,4,1,5), bpm:88,  guitar:'lespaul',  groove:'rock'},
+  mancuso:   {name:'Matteo Mancuso (Fusion)',      mode:'dorian',     deg:new Array(1,4,7,3), bpm:112, guitar:'lespaul',  groove:'jazz'},
+  wong:      {name:'Cory Wong (Funk Cocotte)',     mode:'mixolydian', deg:new Array(1,4,1,4), bpm:112, guitar:'strat',    groove:'funk'},
+  hendrix:   {name:'Hendrix / SRV (Blues R&B)',    mode:'blues',      deg:new Array(1,4,5,4), bpm:82,  guitar:'strat',    groove:'blues'},
+  sheeran:   {name:'Ed Sheeran (Pop Percussive)',  mode:'ionian',     deg:new Array(1,5,6,4), bpm:92,  guitar:'acoustic', groove:'rock'},
+  misch:     {name:'Tom Misch (Chill Neo-Soul)',   mode:'dorian',     deg:new Array(2,5,1,6), bpm:90,  guitar:'strat',    groove:'funk'},
+  henson:    {name:'Tim Henson (Trap-Prog)',       mode:'harmonic_min',deg:new Array(1,6,4,5),bpm:118, guitar:'nylon',    groove:'funk'},
+  mason:     {name:'Brent Mason (Chicken Pickin)', mode:'mixolydian', deg:new Array(1,4,5,1), bpm:120, guitar:'strat',    groove:'jazz'},
+  gilberto:  {name:'João Gilberto (Bossa Nova)',   mode:'ionian',     deg:new Array(1,2,5,1), bpm:116, guitar:'nylon',    groove:'bossa'},
+  page:      {name:'Jimmy Page (Classic Rock)',    mode:'mixolydian', deg:new Array(1,7,4,1), bpm:92,  guitar:'lespaul',  groove:'rock'},
+  gilmour:   {name:'David Gilmour (Melodic Bends)',mode:'aeolian',    deg:new Array(1,4,1,5), bpm:66,  guitar:'strat',    groove:'rock'},
+  reinhardt: {name:'Django Reinhardt (Manouche)',  mode:'harmonic_min',deg:new Array(1,6,2,5),bpm:132, guitar:'acoustic', groove:'jazz'},
+  montgomery:{name:'Wes Montgomery (Jazz Octaves)',mode:'dorian',     deg:new Array(2,5,1,6), bpm:106, guitar:'lespaul',  groove:'jazz'},
+  mayfield:  {name:'Curtis Mayfield (Soul R&B)',   mode:'ionian',     deg:new Array(1,3,4,5), bpm:84,  guitar:'strat',    groove:'funk'},
+  marley:    {name:'Bob Marley (Reggae Skank)',    mode:'aeolian',    deg:new Array(1,4,6,5), bpm:76,  guitar:'lespaul',  groove:'reggae'},
+  malmsteen: {name:'Yngwie Malmsteen (Néoclass.)', mode:'harmonic_min',deg:new Array(1,4,5,1),bpm:126, guitar:'strat',    groove:'rock'},
+  frusciante:{name:'John Frusciante (Funk-Rock)',  mode:'aeolian',    deg:new Array(1,5,6,4), bpm:90,  guitar:'strat',    groove:'funk'},
+  bensusan:  {name:'Pierre Bensusan (Celtic)',     mode:'dorian',     deg:new Array(1,7,4,1), bpm:94,  guitar:'acoustic', groove:'bossa'},
+  gibbons:   {name:'Billy Gibbons (Texas Boogie)', mode:'blues',      deg:new Array(1,4,5,1), bpm:108, guitar:'lespaul',  groove:'blues'},
+  sharkey:   {name:'Isaiah Sharkey (Gospel R&B)',  mode:'ionian',     deg:new Array(1,3,6,2,5,1), bpm:74, guitar:'strat', groove:'funk'},
+  buckley:   {name:'Jeff Buckley (Alt-Folk)',      mode:'aeolian',    deg:new Array(1,6,4,5), bpm:70,  guitar:'strat',    groove:'rock'},
+  petrucci:  {name:'John Petrucci (Prog Metal)',   mode:'phrygian_dom',deg:new Array(1,2,7,1),bpm:120, guitar:'lespaul',  groove:'rock'},
+  pacolucia: {name:'Paco de Lucía (Flamenco)',     mode:'phrygian_dom',deg:new Array(1,2,3,2),bpm:122, guitar:'nylon',    groove:'bossa'},
+  moore:     {name:'Gary Moore (Slow Blues)',      mode:'aeolian',    deg:new Array(1,6,4,5), bpm:62,  guitar:'lespaul',  groove:'blues'},
+  trucks:    {name:'Derek Trucks (Slide Soul)',    mode:'mixolydian', deg:new Array(1,4,1,5), bpm:80,  guitar:'lespaul',  groove:'blues'}
 };
-(function mapGrooves() {
-  var gMap = {
-    bonamassa:'blues', hendrix:'blues', mayer:'blues', moore:'blues', gibbons:'blues', trucks:'blues',
-    wong:'funk', frusciante:'funk', asato:'funk', misch:'funk', sharkey:'funk', mayfield:'funk',
-    gilberto:'bossa', pacolucia:'bossa', bensusan:'bossa', igusa:'bossa',
-    marley:'reggae',
-    reinhardt:'jazz', montgomery:'jazz', emmanuel:'jazz', mason:'jazz'
-  };
-  for (var k in PATS) { PATS[k].groove = gMap[k] || 'rock'; }
-})();
-
 var LOCKS = { inst: false, lvl: false, key: false, style: false };
-function initStyleMenu() {
-  var sel = document.getElementById('styleSelect');
-  if (!sel) return;
-  sel.innerHTML = '';
-  var keys = Object.keys(PATS);
-  for (var i = 0; i < keys.length; i++) {
-    var k = keys[i], opt = document.createElement('option');
-    opt.value = k; opt.textContent = (i + 1) + '. ' + PATS[k].name;
-    sel.appendChild(opt);
-  }
-  updateGuitarTip();
-}
-function toggleLock(part) {
-  LOCKS[part] = !LOCKS[part];
-  var btn = document.getElementById('lock-' + part);
-  if (btn) {
-    btn.textContent = LOCKS[part] ? '🔒' : '🔓';
-    btn.className = LOCKS[part] ? 'lock-btn locked' : 'lock-btn';
-  }
-}
-function updateGuitarTip() {
-  var inst = document.getElementById('instSelect').value, box = document.getElementById('guitarTipBox');
-  if (box && GUITARS[inst]) box.textContent = '🎸 ' + GUITARS[inst].tip;
-}
-function pickRandom(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 var curItem = null, curProgRoots = new Array("C","G","A","F"), favs = new Array();
 try { favs = JSON.parse(localStorage.getItem("glab_f") || "[]"); } catch(e) {}
 
+function pickRandom(arr) { return arr.slice(Math.floor(Math.random() * arr.length)).shift(); }
 function goTab(id, el) {
   var p = document.getElementsByClassName("panel");
   for (var i = 0; i < p.length; i++) p.item(i).className = "panel";
@@ -224,55 +140,51 @@ function goTab(id, el) {
   for (var j = 0; j < b.length; j++) b.item(j).className = "nav-btn";
   if (el) el.className = "nav-btn active";
 }
+function toggleLock(part) {
+  LOCKS[part] = !LOCKS[part];
+  var btn = document.getElementById('lock-' + part);
+  if (btn) { btn.textContent = LOCKS[part] ? '🔒' : '🔓'; btn.className = LOCKS[part] ? 'lock-btn locked' : 'lock-btn'; }
+}
+function updateGuitarTip() {
+  var inst = document.getElementById('instSelect').value, box = document.getElementById('guitarTipBox');
+  if (box && GUITARS[inst]) box.textContent = '🎸 ' + GUITARS[inst].tip;
+}
 function norm(n) { return n.replace("Bb","A#").replace("Ab","G#").replace("Eb","D#").replace("Db","C#").replace("Gb","F#"); }
 function anatomy(name) {
   var r = name.match(/^[A-G][#b]?/).toString();
   var min = (name.indexOf("m") !== -1 && name.indexOf("maj") === -1);
   var idx = NOTES.indexOf(norm(r)); if (idx < 0) idx = 0;
-  return {R:r, T:NOTES[(idx+(min?3:4))%12], Q:NOTES[(idx+7)%12], S:NOTES[(idx+(name.indexOf("maj")!==-1?11:10))%12]};
+  return {R:r, T:NOTES.slice((idx+(min?3:4))%12).shift(), Q:NOTES.slice((idx+7)%12).shift(), S:NOTES.slice((idx+(name.indexOf("maj")!==-1?11:10))%12).shift()};
 }
 function buildDynamicKey(kName, modeKey) {
-  var kObj = KEYS[kName] || KEYS.C;
-  var mObj = MODES[modeKey] || MODES.ionian;
-  var scaleArr = kObj.flat ? NOTES_FLAT : NOTES_SHARP;
-  var rIdx = kObj.idx;
-  var scaleNotes = new Array();
+  var kObj = KEYS[kName] || KEYS.C, mObj = MODES[modeKey] || MODES.ionian;
+  var scaleArr = kObj.flat ? NOTES_FLAT : NOTES_SHARP, rIdx = kObj.idx, scaleNotes = new Array();
   for (var i = 0; i < mObj.intervals.length; i++) {
     var iv = mObj.intervals.slice(i, i + 1).pop();
-    scaleNotes.push(scaleArr.slice((rIdx + iv) % 12, ((rIdx + iv) % 12) + 1).pop());
+    scaleNotes.push(scaleArr.slice((rIdx + iv) % 12).shift());
   }
-  var SHAPES = {
-    maj7: 'x-3-2-0-0-0', m7: 'x-0-2-0-1-0', '7': '3-2-0-0-0-1', m7b5: 'x-1-2-1-2-x',
-    mMaj7: 'x-0-2-1-1-0', 'maj7#5': 'x-3-2-1-0-0', dim7: 'x-1-2-0-2-0'
-  };
+  var SHAPES = {maj7:'x-3-2-0-0-0',m7:'x-0-2-0-1-0','7':'3-2-0-0-0-1',m7b5:'x-1-2-1-2-x',mMaj7:'x-0-2-1-1-0','maj7#5':'x-3-2-1-0-0',dim7:'x-1-2-0-2-0'};
   var chMap = {};
   for (var d = 1; d <= 7; d++) {
-    var idx = (d - 1) % scaleNotes.length;
-    var rn = scaleNotes.slice(idx, idx + 1).pop();
-    var q = mObj.chords.slice(idx, idx + 1).pop();
+    var idx = (d - 1) % scaleNotes.length, rn = scaleNotes.slice(idx).shift(), q = mObj.chords.slice(idx).shift();
     chMap[String(d)] = { n: rn + q, f: SHAPES[q] || 'x-3-2-0-1-0' };
   }
-  var blues = new Array(0, 3, 5, 6, 7, 10).map(function(s) {
-    return scaleArr.slice((rIdx + s) % 12, ((rIdx + s) % 12) + 1).pop();
-  });
+  var blues = new Array(0,3,5,6,7,10).map(function(s){ return scaleArr.slice((rIdx+s)%12).shift(); });
   return { r: kName, ch: chMap, blues: blues, modeLabel: mObj.label, scaleNotes: scaleNotes };
 }
-
-function buildFullWidthTab(chords, style, lvl) {
+function buildFullWidthTab(chords, lvl) {
   var w = window.innerWidth || 768, perRow = (w >= 680) ? 4 : 2;
   var charsPerBar = Math.max(12, Math.floor(((w - 65) / 7.8 - perRow - 2) / perRow)), dash = "";
   for (var d = 0; d < charsPerBar; d++) dash += "-";
   var strNames = new Array("e|","B|","G|","D|","A|","E|"), blocks = new Array();
   for (var i = 0; i < chords.length; i++) {
-    var c = chords.slice(i, i + 1).pop(), p = c.f.split("-");
-    var e6 = p.slice(0,1).pop(), a5 = p.slice(1,2).pop(), d4 = p.slice(2,3).pop();
-    var g3 = p.slice(3,4).pop(), b2 = p.slice(4,5).pop(), e1 = p.slice(5,6).pop();
-    var bStr = (e6 !== "x") ? 5 : 4, bVal = (e6 !== "x") ? e6 : a5;
-    var col = new Array(dash, dash, dash, dash, dash, dash);
+    var c = chords.slice(i).shift(), p = c.f.split("-");
+    var e6 = p.slice(0,1).pop(), a5 = p.slice(1,2).pop(), d4 = p.slice(2,3).pop(), g3 = p.slice(3,4).pop(), b2 = p.slice(4,5).pop(), e1 = p.slice(5,6).pop();
+    var bStr = (e6 !== "x") ? 5 : 4, bVal = (e6 !== "x") ? e6 : a5, col = new Array(dash, dash, dash, dash, dash, dash);
     function put(row, ratio, val) {
       if (!val || val === "x") return;
       var pos = Math.max(1, Math.min(charsPerBar - val.length - 1, Math.floor(charsPerBar * ratio)));
-      var s = col.slice(row, row + 1).pop();
+      var s = col.slice(row).shift();
       col.splice(row, 1, s.substring(0, pos) + val + s.substring(pos + val.length));
     }
     put(bStr, 0.05, bVal); put(3, 0.25, d4); put(2, 0.45, g3); put(1, 0.65, b2);
@@ -282,23 +194,21 @@ function buildFullWidthTab(chords, style, lvl) {
   var out = "";
   for (var m = 0; m < blocks.length; m += perRow) {
     var sl = blocks.slice(m, m + perRow), hdr = "Mes. " + (m + 1) + "-" + (m + sl.length) + " : ";
-    for (var h = 0; h < sl.length; h++) hdr += sl.slice(h, h + 1).pop().name + (h < sl.length - 1 ? " | " : "");
+    for (var h = 0; h < sl.length; h++) hdr += sl.slice(h).shift().name + (h < sl.length - 1 ? " | " : "");
     out += hdr + "\n";
     for (var r = 0; r < 6; r++) {
-      var rs = strNames.slice(r, r + 1).pop();
-      for (var b = 0; b < sl.length; b++) rs += sl.slice(b, b + 1).pop().lines.slice(r, r + 1).pop() + "|";
+      var rs = strNames.slice(r).shift();
+      for (var b = 0; b < sl.length; b++) rs += sl.slice(b).shift().lines.slice(r).shift() + "|";
       out += rs + "\n";
     }
     out += "\n";
   }
   return out;
 }
-
 function buildFretboard(title, scaleNotes, tonic) {
   var tIdx = NOTES.indexOf(norm(tonic)), W = 940, H = 195, x0 = 42, y0 = 26, fw = 56, sh = 26;
   var svg = '<svg viewBox="0 0 ' + W + ' ' + H + '" style="width:100%;height:auto;display:block;background:#1e1b18;border-radius:8px;border:1px solid #475569;">';
-  svg += '<rect x="' + x0 + '" y="' + y0 + '" width="' + (15 * fw) + '" height="' + (5 * sh) + '" fill="#2d231a"/>';
-  svg += '<rect x="' + (x0 - 4) + '" y="' + y0 + '" width="6" height="' + (5 * sh) + '" fill="#f8fafc"/>';
+  svg += '<rect x="' + x0 + '" y="' + y0 + '" width="' + (15 * fw) + '" height="' + (5 * sh) + '" fill="#2d231a"/><rect x="' + (x0 - 4) + '" y="' + y0 + '" width="6" height="' + (5 * sh) + '" fill="#f8fafc"/>';
   for (var f = 0; f <= 15; f++) {
     var fx = x0 + f * fw;
     svg += '<line x1="' + fx + '" y1="' + y0 + '" x2="' + fx + '" y2="' + (y0 + 5 * sh) + '" stroke="#94a3b8" stroke-width="' + (f === 0 ? 4 : 2) + '"/>';
@@ -306,28 +216,23 @@ function buildFretboard(title, scaleNotes, tonic) {
   }
   var sLabels = new Array("e","B","G","D","A","E");
   for (var s = 0; s < 6; s++) {
-    var sy = y0 + s * sh, o = OPEN_STR[s];
+    var sy = y0 + s * sh, o = OPEN_STR.slice(s).shift();
     svg += '<line x1="' + (x0 - 4) + '" y1="' + sy + '" x2="' + (x0 + 15 * fw) + '" y2="' + sy + '" stroke="#cbd5e1" stroke-width="' + (1 + s * 0.35) + '"/>';
-    svg += '<text x="16" y="' + (sy + 4) + '" fill="#cbd5e1" font-size="13" font-weight="bold">' + sLabels[s] + '</text>';
+    svg += '<text x="16" y="' + (sy + 4) + '" fill="#cbd5e1" font-size="13" font-weight="bold">' + sLabels.slice(s).shift() + '</text>';
     for (var fr = 0; fr <= 15; fr++) {
-      var nn = NOTES[(o + fr) % 12], inS = false;
-      for (var n = 0; n < scaleNotes.length; n++) if (norm(scaleNotes[n]) === nn) inS = true;
+      var nn = NOTES.slice((o + fr) % 12).shift(), inS = false;
+      for (var n = 0; n < scaleNotes.length; n++) if (norm(scaleNotes.slice(n).shift()) === nn) inS = true;
       if (inS) {
         var diff = (NOTES.indexOf(nn) - tIdx + 12) % 12, col = "#475569", lbl = nn;
-        if (diff === 0) { col = "#dc2626"; lbl = "R"; }
-        else if (diff === 3 || diff === 4) { col = "#0284c7"; lbl = "3"; }
-        else if (diff === 7) { col = "#059669"; lbl = "5"; }
-        else if (diff === 10 || diff === 11) { col = "#d97706"; lbl = "7"; }
+        if (diff === 0) { col = "#dc2626"; lbl = "R"; } else if (diff === 3 || diff === 4) { col = "#0284c7"; lbl = "3"; } else if (diff === 7) { col = "#059669"; lbl = "5"; } else if (diff === 10 || diff === 11) { col = "#d97706"; lbl = "7"; }
         var cx = (fr === 0) ? (x0 - 12) : (x0 + (fr - 0.5) * fw);
-        svg += '<circle cx="' + cx + '" cy="' + sy + '" r="10.5" fill="' + col + '" stroke="#fff" stroke-width="1.5"/>';
-        svg += '<text x="' + cx + '" y="' + (sy + 4) + '" fill="#fff" font-size="11" font-weight="bold" text-anchor="middle">' + lbl + '</text>';
+        svg += '<circle cx="' + cx + '" cy="' + sy + '" r="10.5" fill="' + col + '" stroke="#fff" stroke-width="1.5"/><text x="' + cx + '" y="' + (sy + 4) + '" fill="#fff" font-size="11" font-weight="bold" text-anchor="middle">' + lbl + '</text>';
       }
     }
   }
   svg += '</svg>';
   return '<div style="background:#0f172a;padding:10px;border-radius:10px;margin-bottom:10px;border:1px solid #334155;"><div style="font-size:13px;font-weight:bold;color:#38bdf8;margin-bottom:6px;">' + title + '</div><div style="overflow-x:auto;">' + svg + '</div></div>';
 }
-
 function genProg(rnd) {
   if (rnd) {
     if (!LOCKS.style) document.getElementById('styleSelect').value = pickRandom(Object.keys(PATS));
@@ -344,148 +249,113 @@ function genProg(rnd) {
   var stKey = document.getElementById('styleSelect').value, instKey = document.getElementById('instSelect').value;
   var lvlVal = document.getElementById('lvlSelect').value, lvlLabel = lvlVal === 'deb' ? 'Débutant' : (lvlVal === 'int' ? 'Intermédiaire' : 'Avancé');
   var bars = parseInt((document.getElementById('pg-bars') || {value:8}).value, 10) || 8;
-      var patObj = PATS[stKey] || PATS.emmanuel;
-  if (patObj.bpm && typeof aMode !== 'undefined' && !aMode) {
-    bpm = patObj.bpm;
-    document.getElementById("bpm-lbl").textContent = bpm + " BPM";
-  }
+  var patObj = PATS[stKey] || PATS.emmanuel;
+  if (patObj.bpm && typeof aMode !== 'undefined' && !aMode) { bpm = patObj.bpm; document.getElementById("bpm-lbl").textContent = bpm + " BPM"; }
   var activeMode = (mSel === 'auto') ? patObj.mode : (mSel === 'major' ? 'ionian' : (mSel === 'minor' ? 'aeolian' : (mSel === 'modal' ? 'dorian' : 'blues')));
   var kd = buildDynamicKey(k, activeMode), gObj = GUITARS[instKey] || GUITARS.strat;
   var cHtml = '', chObjs = new Array(), seen = {};
   curProgRoots = new Array();
-  var fretShift = (instKey === 'lespaul') ? 7 : (instKey === 'strat' ? 3 : 0);
   for (var b = 0; b < bars; b++) {
-    var idxDeg = b % patObj.deg.length;
-    var deg = String(patObj.deg.slice(idxDeg, idxDeg + 1).pop());
+    var deg = String(patObj.deg.slice(b % patObj.deg.length).shift());
     var baseC = kd.ch[deg] || kd.ch['1'];
-    var shiftedF = baseC.f.split('-').map(function(v) {
-      if (v === 'x') return 'x';
-      return String(parseInt(v, 10) + fretShift);
-    }).join('-');
-    var c = { n: baseC.n, f: shiftedF };
-    var an = anatomy(c.n);
+    var shiftedF = baseC.f.split('-').map(function(v) { return (v === 'x') ? 'x' : String(parseInt(v, 10) + gObj.shift); }).join('-');
+    var c = { n: baseC.n, f: shiftedF }, an = anatomy(c.n);
     chObjs.push(c); curProgRoots.push(norm(an.R));
     if (!seen[deg]) {
       seen[deg] = true;
-
       cHtml += '<div class="chord-box"><small>Degré '+deg+'</small><strong>'+c.n+'</strong><div style="font-size:12px;">'+c.f+'</div><span class="deg d-R">R:'+an.R+'</span><span class="deg d-3">3:'+an.T+'</span><span class="deg d-5">5:'+an.Q+'</span><span class="deg d-7">7:'+an.S+'</span></div>';
     }
   }
-sh(c); curProgRoots.push(norm(an.R));
-        if (!seen[deg]) {
-      seen[deg] = true;
-      cHtml += '<div class="chord-box"><small>Degré '+deg+'</small><strong>'+c.n+'</strong><div style="font-size:12px;">'+c.f+'</div><span class="deg d-R">R:'+an.R+'</span><span class="deg d-3">3:'+an.T+'</span><span class="deg d-5">5:'+an.Q+'</span><span class="deg d-7">7:'+an.S+'</span></div>';
-    }
-  }
-  var tab = buildFullWidthTab(chObjs, patObj.name, lvlLabel);
-  curItem = {title: patObj.name + ' en ' + k + ' (' + bars + ' mes.)', meta: gObj.name + ' • ' + kd.modeLabel + ' • ' + lvlLabel, tab: tab, tip: INST[instKey]};
+  var tab = buildFullWidthTab(chObjs, lvlLabel);
+  curItem = {title: patObj.name + ' en ' + k + ' (' + bars + ' mes.)', meta: gObj.name + ' • ' + kd.modeLabel + ' • ' + lvlLabel, tab: tab, tip: gObj.tip};
   var h = '<div class="card"><span class="badge">'+patObj.name+'</span><span class="badge">'+kd.modeLabel+'</span><span class="badge">'+bars+' mes.</span><span class="badge">'+gObj.name+'</span><h2>'+patObj.name+' ('+k+' — '+kd.modeLabel+')</h2>';
-  h += '<h3>1. Accords & Notes Cibles</h3><div>'+cHtml+'</div><h3>2. Tablature ('+bars+' Mesures)</h3><div class="tab">'+tab+'</div>';
+  h += '<h3>1. Accords & Notes Cibles</h3><div>'+cHtml+'</div><h3>2. Tablature Complète ('+bars+' Mesures)</h3><div class="tab">'+tab+'</div>';
   h += buildFretboard('Gamme : ' + k + ' ' + kd.modeLabel, kd.scaleNotes, k);
   h += buildFretboard('Pentatonique / Blues de ' + k, kd.blues, k);
-  h += '<div class="tone-tip">🎸 <strong>Réglage '+gObj.name+' :</strong> '+INST[instKey]+'</div></div>';
+  h += '<div class="tone-tip">🎸 <strong>Réglage '+gObj.name+' :</strong> '+gObj.tip+'</div></div>';
   document.getElementById('prog-res').innerHTML = h;
 }
+
 function genExo(rnd) {
-  var insts = new Array("Stratocaster","Les Paul","Acoustique");
-  var lvls = new Array("Débutant","Intermédiaire","Avancé");
   var themes = new Array("Fingerpicking","Hybrid Picking","Bends & Vibrato","Double-Stops","Harmoniques","Voicings & Slap","Legato & Tapping","Sweep & Arpèges","Cocottes & Funk 16e","Octaves & Jazz","Aller-Retour (Alternate)","Slide & Open Tuning");
   if (rnd) {
-    document.getElementById("ex-inst").value = pickRandom(insts);
-    document.getElementById("ex-lvl").value = pickRandom(lvls);
+    document.getElementById("ex-inst").value = pickRandom(new Array("Stratocaster","Les Paul","Acoustique"));
+    document.getElementById("ex-lvl").value = pickRandom(new Array("Débutant","Intermédiaire","Avancé"));
     document.getElementById("ex-theme").value = pickRandom(themes);
   }
   var inst = document.getElementById("ex-inst").value, lvl = document.getElementById("ex-lvl").value, th = document.getElementById("ex-theme").value;
   var f = (inst === "Acoustique") ? 0 : (inst === "Stratocaster" ? pickRandom(new Array(3,5,7,8)) : pickRandom(new Array(7,9,10,12)));
   var f2 = f + 2, f3 = f + 3, f4 = f + 5, tapF = f + 12;
-  var stepTxt = (lvl === "Débutant") ? "Noires & Croches" : (lvl === "Intermédiaire" ? "Croches & Liaisons" : "Doubles-croches & Sauts");
-  var bpmEx = (lvl === "Débutant") ? "65-75 BPM" : (lvl === "Intermédiaire" ? "85-100 BPM" : "110-135 BPM");
-  var lines = new Array("e|","B|","G|","D|","A|","E|"), title = th + " (Pos. " + f + ")", tip = "";
-
+  var bpmEx = (lvl === "Débutant") ? "65-75 BPM" : (lvl === "Intermédiaire" ? "85-95 BPM" : "105-125 BPM");
+  var shifts = new Array(0, 2, 3, 0), eL="e|", bL="B|", gL="G|", dL="D|", aL="A|", EL="E|", tip = "", fing = "";
   for (var m = 0; m < 4; m++) {
-    var sh = (m % 2 === 1) ? 2 : 0;
+    var sh = shifts.slice(m).shift();
     if (th === "Fingerpicking") {
-      tip = "Pouce en Palm Mute sur les graves, index/majeur sur G et B.";
-      lines.push("-------"+(f+sh)+"---------"+(f2+sh)+"-|"); lines.push("---"+(f+sh)+"---------"+(f2+sh)+"-----|");
-      lines.push("-----"+(f+sh)+"---------"+(f+sh)+"---|"); lines.push("---"+(f+sh)+"-----"+(f2+sh)+"-------|");
-      lines.push("-"+(f+sh)+"-----------"+(f+sh)+"-----|"); lines.push("-------"+(f+sh)+"-----------|");
+      fing = "Main droite : P (basses E/A/D), i (G), m (B), a (e)"; tip = "Basse alternée régulière au pouce en Palm Mute léger sur les 4 mesures.";
+      eL+="-------"+(f+sh)+"---------|"; bL+="---"+(f+sh)+"---------"+(f2+sh)+"---|"; gL+="-----"+(f+sh)+"-------"+(f+sh)+"---|"; dL+="---"+(f+sh)+"-----"+(f2+sh)+"-----|"; aL+="-"+(f+sh)+"---------"+(f+sh)+"-----|"; EL+="-------"+(f+sh)+"---------|";
     } else if (th === "Hybrid Picking") {
-      tip = "Médiator sur la grave, majeur/annulaire pincent les cordes aiguës.";
-      lines.push("---"+(f4+sh)+"-------"+(f3+sh)+"-----|"); lines.push("-------"+(f2+sh)+"-------"+(f+sh)+"-|");
-      lines.push("-----"+(f2+sh)+"-----------|"); lines.push("-"+(f+sh)+"-------"+(f2+sh)+"-------|");
-      lines.push("-----------"+(f+sh)+"-----|"); lines.push("-------------------|");
+      fing = "Médiator (basses) + Majeur (m) / Annulaire (a) sur cordes aiguës"; tip = "Pincez vers le haut avec l'annulaire pour faire claquer la note aiguë.";
+      eL+="---"+(f4+sh)+"-----"+(f3+sh)+"---|"; bL+="-------"+(f2+sh)+"-----"+(f+sh)+"-|"; gL+="-----"+(f2+sh)+"---------|"; dL+="-"+(f+sh)+"-----"+(f2+sh)+"-----|"; aL+="---------"+(f+sh)+"-----|"; EL+="-----------------|";
     } else if (th === "Bends & Vibrato") {
-      tip = "Poussez avec 3 doigts réunis jusqu'à la hauteur cible sans relâcher.";
-      lines.push("-----------"+(f+sh)+"-------|"); lines.push("---"+(f+sh)+"-"+(f3+sh)+"-------"+(f3+sh)+"~-|");
-      lines.push("-"+(f2+sh)+"b"+(f4+sh)+"r"+(f2+sh)+"-----------|"); lines.push("-------------------|");
-      lines.push("-------------------|"); lines.push("-------------------|");
+      fing = "Main gauche : Doigts 1-2-3 réunis pour pousser la corde G"; tip = "Visez la justesse du ton entier (+2 cases) puis stabilisez le vibrato.";
+      eL+="---------"+(f+sh)+"-----|"; bL+="---"+(f+sh)+"-"+(f3+sh)+"-----"+(f3+sh)+"~-|"; gL+="-"+(f2+sh)+"b"+(f4+sh)+"r"+(f2+sh)+"---------|"; dL+="-----------------|"; aL+="-----------------|"; EL+="-----------------|";
     } else if (th === "Double-Stops") {
-      tip = "Gardez les deux doigts posés simultanément lors du glissé (/).";
-      lines.push("-------------------|"); lines.push("-"+(f+sh)+"/"+(f2+sh)+"---"+(f3+sh)+"\\"+(f2+sh)+"-----|");
-      lines.push("-"+(f+sh)+"/"+(f2+sh)+"---"+(f3+sh)+"\\"+(f2+sh)+"-----|"); lines.push("-----"+(f2+sh)+"-------"+(f+sh)+"---|");
-      lines.push("-------------------|"); lines.push("-------------------|");
+      fing = "Main gauche : Index (1) et Majeur/Annulaire (2-3) en tierces/sixtes"; tip = "Gardez une pression constante pendant le glissé (/) et le retour (\\).";
+      eL+="-----------------|"; bL+="-"+(f+sh)+"/"+(f2+sh)+"---"+(f3+sh)+"\\"+(f2+sh)+"---|"; gL+="-"+(f+sh)+"/"+(f2+sh)+"---"+(f3+sh)+"\\"+(f2+sh)+"---|"; dL+="-----"+(f2+sh)+"-----"+(f+sh)+"-|"; aL+="-----------------|"; EL+="-----------------|";
     } else if (th === "Harmoniques") {
-      tip = "Effleurez exactement au-dessus de la barrette sans appuyer.";
-      lines.push("-----<12>------<7>-|"); lines.push("---<12>------<7>---|"); lines.push("-<12>------<5>-----|");
-      lines.push("-------------------|"); lines.push("-------------------|"); lines.push("-------------------|");
+      fing = "Main gauche : Effleurement léger exactement au-dessus de la frette"; tip = "Relâchez le doigt gauche dès que la corde est pincée pour laisser résonner.";
+      eL+="-----<12>----<7>-|"; bL+="---<12>----<7>---|"; gL+="-<12>----<5>-----|"; dL+="-----------------|"; aL+="-----------------|"; EL+="-----------------|";
     } else if (th === "Legato & Tapping") {
-      tip = "Tapez fermement avec l'index droit (t) et tirez légèrement au relâcher (p).";
-      lines.push("-"+(f+sh)+"h"+(f3+sh)+"t"+(tapF+sh)+"p"+(f3+sh)+"p"+(f+sh)+"----|");
-      lines.push("---------"+(f+sh)+"h"+(f3+sh)+"t"+(tapF+sh)+"p"+(f+sh)+"|");
-      lines.push("-------------------|"); lines.push("-------------------|"); lines.push("-------------------|"); lines.push("-------------------|");
+      fing = "Main gauche : 1-3-4 | Main droite : Index (t) sur la case +12"; tip = "Tapez perpendiculairement à la touche et tirez légèrement au relâcher (p).";
+      eL+="-"+(f+sh)+"h"+(f3+sh)+"t"+(tapF+sh)+"p"+(f3+sh)+"p"+(f+sh)+"--|"; bL+="-------"+(f+sh)+"h"+(f3+sh)+"t"+(tapF+sh)+"p"+(f+sh)+"|"; gL+="-----------------|"; dL+="-----------------|"; aL+="-----------------|"; EL+="-----------------|";
     } else if (th === "Sweep & Arpèges") {
-      tip = "Un seul mouvement fluide du médiator vers le bas puis vers le haut, sans laisser résonner.";
-      lines.push("-----"+(f+sh)+"h"+(f4+sh)+"p"+(f+sh)+"-------|"); lines.push("---"+(f2+sh)+"---------"+(f2+sh)+"-----|");
-      lines.push("-"+(f3+sh)+"-------------"+(f3+sh)+"---|"); lines.push("-------------------|"); lines.push("-------------------|"); lines.push("-------------------|");
+      fing = "Main gauche : 3-2-1-4 | Main droite : Un seul balayage fluide bas/haut"; tip = "Soulevez chaque doigt gauche immédiatement après la note pour éviter le brouillard.";
+      eL+="-----"+(f+sh)+"h"+(f4+sh)+"p"+(f+sh)+"-----|"; bL+="---"+(f2+sh)+"-------"+(f2+sh)+"---|"; gL+="-"+(f3+sh)+"-----------"+(f3+sh)+"-|"; dL+="-----------------|"; aL+="-----------------|"; EL+="-----------------|";
     } else if (th === "Cocottes & Funk 16e") {
-      tip = "Poignet droit souple en aller-retour continu (16e), relâchez la pression main gauche sur (x).";
-      lines.push("-"+(f2+sh)+"-x-x-"+(f2+sh)+"-x-"+(f4+sh)+"-x-x-|");
-      lines.push("-"+(f2+sh)+"-x-x-"+(f2+sh)+"-x-"+(f3+sh)+"-x-x-|");
-      lines.push("-"+(f+sh)+"-x-x-"+(f+sh)+"-x-"+(f2+sh)+"-x-x-|");
-      lines.push("-------------------|"); lines.push("-------------------|"); lines.push("-------------------|");
+      fing = "Main droite : Pendule continu 16e | Main gauche : Relâchement sur (x)"; tip = "Ne bloquez jamais le mouvement du poignet droit, même sur les notes étouffées.";
+      eL+="-"+(f2+sh)+"-x-"+(f2+sh)+"-x-"+(f4+sh)+"-x-|"; bL+="-"+(f2+sh)+"-x-"+(f2+sh)+"-x-"+(f3+sh)+"-x-|"; gL+="-"+(f+sh)+"-x-"+(f+sh)+"-x-"+(f2+sh)+"-x-|"; dL+="-----------------|"; aL+="-----------------|"; EL+="-----------------|";
     } else if (th === "Octaves & Jazz") {
-      tip = "Étouffez la corde intermédiaire avec l'index gauche pour ne faire sonner que l'octave.";
-      lines.push("-------------------|"); lines.push("-"+(f2+sh)+"---"+(f4+sh)+"---"+(f2+sh)+"-----|");
-      lines.push("-x---x---x---------|"); lines.push("-"+(f+sh)+"---"+(f2+sh)+"---"+(f+sh)+"-----|");
-      lines.push("-------------------|"); lines.push("-------------------|");
+      fing = "Main gauche : Index (1) sur D et Auriculaire (4) sur B (G étouffée)"; tip = "La pulpe de l'index doit muter la corde de Sol (x) entre les deux notes.";
+      eL+="-----------------|"; bL+="-"+(f2+sh)+"---"+(f4+sh)+"---"+(f2+sh)+"---|"; gL+="-x---x---x-------|"; dL+="-"+(f+sh)+"---"+(f2+sh)+"---"+(f+sh)+"---|"; aL+="-----------------|"; EL+="-----------------|";
     } else if (th === "Aller-Retour (Alternate)") {
-      tip = "Strictement bas-haut-bas-haut au médiator, même lors des changements de cordes.";
-      lines.push("---------"+(f+sh)+"-"+(f2+sh)+"-"+(f3+sh)+"-----|");
-      lines.push("---"+(f+sh)+"-"+(f2+sh)+"-"+(f3+sh)+"-------"+(f+sh)+"-|");
-      lines.push("-"+(f+sh)+"-"+(f2+sh)+"---------------|");
-      lines.push("-------------------|"); lines.push("-------------------|"); lines.push("-------------------|");
+      fing = "Main gauche : 1-2-3 strict (1 doigt par case) | Médiator : Bas-Haut strict"; tip = "Commencez lentement au métronome en veillant à l'égalité sonore des coups vers le haut.";
+      eL+="-------"+(f+sh)+"-"+(f2+sh)+"-"+(f3+sh)+"---|"; bL+="---"+(f+sh)+"-"+(f2+sh)+"-"+(f3+sh)+"-----"+(f+sh)+"-|"; gL+="-"+(f+sh)+"-"+(f2+sh)+"-------------|"; dL+="-----------------|"; aL+="-----------------|"; EL+="-----------------|";
     } else if (th === "Slide & Open Tuning") {
-      tip = "Placez le bottleneck exactement au-dessus de la barrette et étouffez derrière le tube.";
-      lines.push("-------------------|"); lines.push("-"+(f+sh)+"/"+(f3+sh)+"~---"+(f4+sh)+"\\"+(f2+sh)+"~---|");
-      lines.push("-"+(f+sh)+"/"+(f3+sh)+"----"+(f4+sh)+"\\"+(f2+sh)+"----|");
-      lines.push("-------------------|"); lines.push("-------------------|"); lines.push("-------------------|");
+      fing = "Main gauche : Bottleneck sur annulaire/auriculaire, index étouffe derrière"; tip = "Placez le tube pile au-dessus de la frette métallique (pas au milieu de la case).";
+      eL+="-----------------|"; bL+="-"+(f+sh)+"/"+(f3+sh)+"~--"+(f4+sh)+"\\"+(f2+sh)+"~-|"; gL+="-"+(f+sh)+"/"+(f3+sh)+"---"+(f4+sh)+"\\"+(f2+sh)+"--|"; dL+="-----------------|"; aL+="-----------------|"; EL+="-----------------|";
     } else {
-      tip = "Frappez les cordes avec le pouce sur les temps 2 et 4 (x).";
-      lines.push("---"+(f2+sh)+"---x---"+(f4+sh)+"---x-|"); lines.push("---"+(f2+sh)+"---x---"+(f3+sh)+"---x-|");
-      lines.push("---"+(f+sh)+"----x---"+(f2+sh)+"---x-|"); lines.push("-------------------|");
-      lines.push("-"+(f+sh)+"---------"+(f+sh)+"-------|"); lines.push("-------------------|");
+      fing = "Pouce droit (slap temps 2 & 4) + Doigts i-m-a sur accords enrichis"; tip = "Frappez sèchement les cordes avec la tranche du pouce droit sur les temps 2 et 4.";
+      eL+="---"+(f2+sh)+"--x--"+(f4+sh)+"--x-|"; bL+="---"+(f2+sh)+"--x--"+(f3+sh)+"--x-|"; gL+="---"+(f+sh)+"---x--"+(f2+sh)+"--x-|"; dL+="-----------------|"; aL+="-"+(f+sh)+"-------"+(f+sh)+"-----|"; EL+="-----------------|";
     }
   }
-  var tab = lines.join("\n");
-  curItem = {title: title, meta: inst + " • " + lvl + " • " + stepTxt, tab: tab, tip: tip};
-  document.getElementById("exo-res").innerHTML = '<div class="card"><span class="badge">'+th+'</span><span class="badge">'+inst+'</span><span class="badge">'+lvl+'</span><span class="badge">'+stepTxt+'</span><h2>'+title+' ('+bpmEx+')</h2><div class="tab">'+tab+'</div><div class="tone-tip">💡 '+tip+'</div></div>';
-}
-
-
-
-var aCtx = null, aMode = null, aInt = null, bpm = 90, step = 0, sInt = null, refOsc = null;
+  var tab = "Mes. 1           | Mes. 2 (+2)      | Mes. 3 (+3)      | Mes. 4 (Résol.)\n" + eL + "\n" + bL + "\n" + gL + "\n" + dL + "\n" + aL + "\n" + EL;
+var aCtx = null, aMode = null, aInt = null, bpm = 90, step = 0, sInt = null, refOsc = null, tunAnim = null;
 function initACtx() { if (!aCtx) aCtx = new (window.AudioContext || window.webkitAudioContext)(); if (aCtx.state === 'suspended') aCtx.resume(); }
-function chgBpm(d) { bpm = Math.max(40, Math.min(220, bpm + d)); document.getElementById("bpm-lbl").textContent = bpm + " BPM"; if (aMode) { var m = aMode; stopAudio(); toggleAudio(m); } }
+function chgBpm(d) { bpm = Math.max(40, Math.min(200, bpm + d)); document.getElementById("bpm-lbl").textContent = bpm + " BPM"; if (aMode) { var m = aMode; stopAudio(); toggleAudio(m); } }
 function stopAudio() { clearInterval(aInt); aInt = null; aMode = null; document.getElementById("btn-play").textContent = "▶ Basse+Batterie"; document.getElementById("btn-drum").textContent = "🥁 Batterie"; document.getElementById("btn-met").textContent = "⏱ Métro"; }
 
 function playNoise(t, dur, freq, type, vol) {
-  var bufSize = aCtx.sampleRate * dur, buf = aCtx.createBuffer(1, bufSize, aCtx.sampleRate), data = buf.getChannelData(0);
+  var bufSize = Math.floor(aCtx.sampleRate * dur), buf = aCtx.createBuffer(1, bufSize, aCtx.sampleRate), data = buf.getChannelData(0);
   for (var i = 0; i < bufSize; i++) data[i] = Math.random() * 2 - 1;
   var src = aCtx.createBufferSource(), flt = aCtx.createBiquadFilter(), g = aCtx.createGain();
   src.buffer = buf; flt.type = type; flt.frequency.value = freq;
   g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.001, t + dur);
   src.connect(flt); flt.connect(g); g.connect(aCtx.destination);
   src.start(t); src.stop(t + dur);
+}
+
+function playElectricBass(t, freq, dur) {
+  var sub = aCtx.createOscillator(), body = aCtx.createOscillator(), flt = aCtx.createBiquadFilter(), g = aCtx.createGain();
+  sub.type = 'sine'; sub.frequency.value = freq;
+  body.type = 'triangle'; body.frequency.value = freq;
+  flt.type = 'lowpass';
+  flt.frequency.setValueAtTime(480, t);
+  flt.frequency.exponentialRampToValueAtTime(140, t + 0.14);
+  g.gain.setValueAtTime(0.001, t);
+  g.gain.linearRampToValueAtTime(0.38, t + 0.015);
+  g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+  sub.connect(flt); body.connect(flt); flt.connect(g); g.connect(aCtx.destination);
+  sub.start(t); body.start(t); sub.stop(t + dur); body.stop(t + dur);
 }
 
 function toggleAudio(mode) {
@@ -500,41 +370,38 @@ function toggleAudio(mode) {
   var pat = (stEl && PATS[stEl.value]) ? PATS[stEl.value] : { groove: 'rock' };
   var grv = pat.groove || 'rock';
 
-  var KICK = { rock:'1000001010000000', blues:'1000001010000010', funk:'1001000010100000', bossa:'1001100110011001', reggae:'0000000010000000', jazz:'1000100010001000' };
-  var SNARE= { rock:'0000100000001000', blues:'0000100000001000', funk:'0000100101001000', bossa:'0010010000100100', reggae:'0000000010000000', jazz:'0000001000000010' };
-  var HAT  = { rock:'1010101010101010', blues:'1011011011011011', funk:'1111111111111111', bossa:'1010101010101010', reggae:'1010101010101010', jazz:'1001011001011001' };
-  var BASS = { rock:'1010101010101010', blues:'1001001001001001', funk:'1011001010100110', bossa:'1000001010000010', reggae:'0010010010000100', jazz:'1000100010001000' };
-  var BMULT= { rock:new Array(1,1,1,1,1,1,1,1), blues:new Array(1,1.25,1.5,1.67,1.5,1.25), funk:new Array(1,2,1,1,1.5,2,1), bossa:new Array(1,1.5,1,0.75), reggae:new Array(1,1.5,1,1.25), jazz:new Array(1,1.25,1.5,1.75) };
+  // Motifs posés sur 8 croches par mesure (aérés, sans surcharge)
+  var KICK = { rock:'10001000', blues:'10010000', funk:'10010100', bossa:'10011001', reggae:'00001000', jazz:'10001000' };
+  var SNARE= { rock:'00100010', blues:'00100010', funk:'00100010', bossa:'01001010', reggae:'00001000', jazz:'00000010' };
+  var HAT  = { rock:'10101010', blues:'10110110', funk:'11101110', bossa:'10101010', reggae:'01010101', jazz:'10111011' };
+  var BASS = { rock:'10001000', blues:'10010010', funk:'10100100', bossa:'10011001', reggae:'00100100', jazz:'10101010' };
+  var BMULT= { rock:new Array(1,1), blues:new Array(1,1.25,1.5), funk:new Array(1,2,1.5), bossa:new Array(1,1.5,1,0.75), reggae:new Array(1,1.5), jazz:new Array(1,1.25,1.5,1.75) };
 
   aInt = setInterval(function() {
-    var t = aCtx.currentTime, s16 = step % 16;
+    var t = aCtx.currentTime, s8 = step % 8;
     if (mode === 'met') {
-      if (s16 % 4 === 0) {
+      if (s8 % 2 === 0) {
         var o = aCtx.createOscillator(), g = aCtx.createGain();
-        o.frequency.value = (s16 === 0) ? 880 : 440; g.gain.setValueAtTime(0.14, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.05);
+        o.frequency.value = (s8 === 0) ? 880 : 440; g.gain.setValueAtTime(0.12, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.05);
         o.connect(g); g.connect(aCtx.destination); o.start(t); o.stop(t + 0.05);
       }
     } else {
-      if (HAT[grv].charAt(s16) === '1') playNoise(t, grv === 'jazz' ? 0.09 : 0.035, grv === 'jazz' ? 5000 : 8000, 'highpass', (s16 % 4 === 0) ? 0.08 : 0.04);
-      if (KICK[grv].charAt(s16) === '1') {
+      if (HAT[grv].charAt(s8) === '1') playNoise(t, grv === 'jazz' ? 0.08 : 0.03, grv === 'jazz' ? 4500 : 7500, 'highpass', (s8 % 2 === 0) ? 0.06 : 0.03);
+      if (KICK[grv].charAt(s8) === '1') {
         var k = aCtx.createOscillator(), kg = aCtx.createGain();
-        k.frequency.setValueAtTime(grv === 'reggae' ? 110 : 140, t); k.frequency.exponentialRampToValueAtTime(36, t + 0.14);
-        kg.gain.setValueAtTime(0.45, t); kg.gain.exponentialRampToValueAtTime(0.001, t + 0.15);
+        k.frequency.setValueAtTime(grv === 'reggae' ? 105 : 130, t); k.frequency.exponentialRampToValueAtTime(38, t + 0.14);
+        kg.gain.setValueAtTime(0.42, t); kg.gain.exponentialRampToValueAtTime(0.001, t + 0.15);
         k.connect(kg); kg.connect(aCtx.destination); k.start(t); k.stop(t + 0.15);
       }
-      if (SNARE[grv].charAt(s16) === '1') playNoise(t, grv === 'bossa' ? 0.05 : 0.13, grv === 'bossa' ? 2200 : 1200, 'bandpass', grv === 'bossa' ? 0.18 : 0.24);
-      if (mode === 'band' && BASS[grv].charAt(s16) === '1') {
-        var rn = curProgRoots[Math.floor(step / 16) % curProgRoots.length] || "C";
-        var mults = BMULT[grv], f = (BASS_FREQ[rn] || 65.41) * mults[step % mults.length];
-        var bOsc = aCtx.createOscillator(), flt = aCtx.createBiquadFilter(), bG = aCtx.createGain();
-        bOsc.type = (grv === 'reggae' || grv === 'bossa') ? 'triangle' : 'sawtooth';
-        bOsc.frequency.value = f; flt.type = 'lowpass'; flt.frequency.value = (grv === 'reggae') ? 190 : (grv === 'funk' ? 420 : 280);
-        bG.gain.setValueAtTime(0.32, t); bG.gain.exponentialRampToValueAtTime(0.001, t + 0.26);
-        bOsc.connect(flt); flt.connect(bG); bG.connect(aCtx.destination); bOsc.start(t); bOsc.stop(t + 0.26);
+      if (SNARE[grv].charAt(s8) === '1') playNoise(t, grv === 'bossa' ? 0.04 : 0.11, grv === 'bossa' ? 2000 : 1100, 'bandpass', grv === 'bossa' ? 0.14 : 0.20);
+      if (mode === 'band' && BASS[grv].charAt(s8) === '1') {
+        var rn = curProgRoots.slice(Math.floor(step / 8) % curProgRoots.length).shift() || "C";
+        var mults = BMULT[grv], f = (BASS_FREQ[rn] || 65.41) * mults.slice(step % mults.length).shift();
+        playElectricBass(t, f, (60 / bpm) * 0.85);
       }
     }
     step++;
-  }, (60 / bpm) * 125);
+  }, (60 / bpm) * 250);
 }
 
 function toggleScroll() {
@@ -544,18 +411,18 @@ function toggleScroll() {
 }
 function playRef(freq) { initACtx(); stopRef(); refOsc = aCtx.createOscillator(); var g = aCtx.createGain(); refOsc.frequency.value = freq; g.gain.value = 0.15; refOsc.connect(g); g.connect(aCtx.destination); refOsc.start(); }
 function stopRef() { if (refOsc) { try { refOsc.stop(); } catch(e) {} refOsc = null; } }
-var tunAnim = null;
+
 function initTunerUI() {
   var ns = new Array({n:"E2 (6e)",f:82.41},{n:"A2 (5e)",f:110},{n:"D3 (4e)",f:146.83},{n:"G3 (3e)",f:196},{n:"B3 (2e)",f:246.94},{n:"E4 (1re)",f:329.63},{n:"La 440 Hz",f:440});
   var h = '<div style="text-align:center;padding:12px;background:#0f172a;border-radius:10px;border:1px solid #334155;margin-bottom:12px;">';
-  h += '<button class="btn" onclick="startMicTuner()">🎙 Activer Accordeur Micro</button>';
+  h += '<button type="button" class="btn" onclick="startMicTuner()">🎙 Activer Accordeur Micro</button>';
   h += '<div id="tun-note" style="font-size:36px;font-weight:bold;color:#38bdf8;margin:8px 0;">--</div>';
   h += '<div style="position:relative;height:18px;background:#1e293b;border-radius:9px;border:1px solid #475569;margin:8px auto;max-width:320px;">';
   h += '<div style="position:absolute;left:50%;top:0;bottom:0;width:2px;background:#10b981;"></div>';
   h += '<div id="tun-pin" style="position:absolute;left:50%;top:2px;width:12px;height:12px;margin-left:-6px;border-radius:50%;background:#f59e0b;transition:left 0.08s;"></div></div>';
   h += '<div id="tun-cents" style="font-size:12px;color:#94a3b8;">Jouez une corde à vide près du micro</div></div>';
-  for (var i = 0; i < ns.length; i++) h += '<button class="btn btn-sec" style="margin:3px;" onclick="playRef('+ns[i].f+')">'+ns[i].n+'</button>';
-  h += '<button class="btn btn-del" style="margin:3px;" onclick="stopRef()">⏹ Stop</button>';
+  for (var i = 0; i < ns.length; i++) h += '<button type="button" class="btn btn-sec" style="margin:3px;" onclick="playRef('+ns.slice(i).shift().f+')">'+ns.slice(i).shift().n+'</button>';
+  h += '<button type="button" class="btn btn-del" style="margin:3px;" onclick="stopRef()">⏹ Stop</button>';
   document.getElementById("tun-ui").innerHTML = h;
 }
 
@@ -578,7 +445,7 @@ function startMicTuner() {
         if (bestO > 0) {
           var freq = aCtx.sampleRate / bestO, midi = Math.round(12 * (Math.log(freq / 440) / Math.LN2)) + 69;
           var exact = 440 * Math.pow(2, (midi - 69) / 12), cents = Math.round(1200 * Math.log(freq / exact) / Math.LN2);
-          var nName = NOTES[((midi % 12) + 12) % 12], pin = document.getElementById("tun-pin"), nEl = document.getElementById("tun-note");
+          var nName = NOTES.slice(((midi % 12) + 12) % 12).shift(), pin = document.getElementById("tun-pin"), nEl = document.getElementById("tun-note");
           nEl.textContent = nName; pin.style.left = Math.max(5, Math.min(95, 50 + cents)) + "%";
           var ok = Math.abs(cents) <= 5;
           pin.style.background = ok ? "#10b981" : "#f59e0b"; nEl.style.color = ok ? "#10b981" : "#38bdf8";
@@ -597,30 +464,50 @@ function renderFavs() {
   document.getElementById("fav-n").textContent = favs.length;
   var h = "";
   for (var i = 0; i < favs.length; i++) {
-    var f = favs[i];
-    h += '<div class="card"><span class="badge">'+f.meta+'</span><h2>'+f.title+'</h2><div class="tab">'+f.tab+'</div><p style="font-size:13px;">'+f.tip+'</p><button class="btn btn-del no-print" onclick="delFav('+i+')">🗑️ Supprimer</button></div>';
+    var f = favs.slice(i).shift();
+    h += '<div class="card"><span class="badge">'+f.meta+'</span><h2>'+f.title+'</h2><div class="tab">'+f.tab+'</div><p style="font-size:13px;">'+f.tip+'</p><button type="button" class="btn btn-del no-print" onclick="delFav('+i+')">🗑️ Supprimer</button></div>';
   }
   document.getElementById("fav-list").innerHTML = h || '<div class="card"><p>Aucun favori enregistré.</p></div>';
 }
-window.onresize = function() { if (document.getElementById("p-prog").className.indexOf("active") !== -1) genProg(false); };
-function buildProgUI() {
-  var box = document.getElementById('prog-controls');
-  if (!box) return;
-  var ks = new Array('C','Db','D','Eb','E','F','Gb','G','Ab','A','Bb','B');
-  var kOpt = '';
-  for (var i = 0; i < ks.length; i++) kOpt += '<option value="' + ks[i] + '">' + ks[i] + '</option>';
-  box.innerHTML =
-    '<label>Guitare</label><div class="ctrl-row"><select id="instSelect" onchange="updateGuitarTip()"><option value="strat">Fender Stratocaster</option><option value="lespaul">Gibson Les Paul</option><option value="acoustic">Acoustique Folk</option><option value="nylon">Guitare Nylon</option></select><button type="button" class="lock-btn" id="lock-inst" onclick="toggleLock(\'inst\')">🔓</button></div>' +
-    '<label>Niveau</label><div class="ctrl-row"><select id="lvlSelect"><option value="deb">Débutant</option><option value="int">Intermédiaire</option><option value="adv">Avancé</option></select><button type="button" class="lock-btn" id="lock-lvl" onclick="toggleLock(\'lvl\')">🔓</button></div>' +
-    '<label>Tonalité & Mode</label><div class="ctrl-row"><select id="keySelect">' + kOpt + '</select><select id="modeSelect"><option value="auto">Mode du Style (Auto)</option><option value="major">Majeur</option><option value="minor">Mineur</option><option value="blues">Blues</option><option value="modal">Modal</option></select><button type="button" class="lock-btn" id="lock-key" onclick="toggleLock(\'key\')">🔓</button></div>' +
-    '<label>Style & Artiste (32 réf.)</label><div class="ctrl-row"><select id="styleSelect"></select><button type="button" class="lock-btn" id="lock-style" onclick="toggleLock(\'style\')">🔓</button></div>' +
-    '<div id="guitarTipBox" class="tone-tip"></div>' +
-    '<label>Mesures</label><select id="pg-bars"><option value="4">4 mesures</option><option value="8" selected>8 mesures</option><option value="12">12 mesures</option><option value="16">16 mesures</option></select>' +
-    '<div style="margin-top:12px;"><button type="button" class="btn" onclick="genProg(false)">✨ Générer</button> <button type="button" class="btn btn-rand" onclick="genProg(true)">🎲 Aléatoire</button> <button type="button" class="btn btn-sec" onclick="saveFav()">⭐ Sauvegarder</button> <button type="button" class="btn btn-sec" onclick="window.print()">🖨 Imprimer</button></div>';
-}
-buildProgUI();
 
-initStyleMenu();
+function buildAllUI() {
+  var pBox = document.getElementById('prog-controls');
+  if (pBox) {
+    var ks = new Array('C','Db','D','Eb','E','F','Gb','G','Ab','A','Bb','B'), kOpt = '';
+    for (var i = 0; i < ks.length; i++) kOpt += '<option value="' + ks.slice(i).shift() + '">' + ks.slice(i).shift() + '</option>';
+    pBox.innerHTML =
+      '<label>Guitare</label><div class="ctrl-row"><select id="instSelect" onchange="updateGuitarTip()"><option value="strat">Fender Stratocaster</option><option value="lespaul">Gibson Les Paul</option><option value="acoustic">Acoustique Folk</option><option value="nylon">Guitare Nylon</option></select><button type="button" class="lock-btn" id="lock-inst" onclick="toggleLock(\'inst\')">🔓</button></div>' +
+      '<label>Niveau</label><div class="ctrl-row"><select id="lvlSelect"><option value="deb">Débutant</option><option value="int">Intermédiaire</option><option value="adv">Avancé</option></select><button type="button" class="lock-btn" id="lock-lvl" onclick="toggleLock(\'lvl\')">🔓</button></div>' +
+      '<label>Tonalité & Mode</label><div class="ctrl-row"><select id="keySelect">' + kOpt + '</select><select id="modeSelect"><option value="auto">Mode du Style (Auto)</option><option value="major">Majeur</option><option value="minor">Mineur</option><option value="blues">Blues</option><option value="modal">Modal</option></select><button type="button" class="lock-btn" id="lock-key" onclick="toggleLock(\'key\')">🔓</button></div>' +
+      '<label>Style & Artiste (32 réf.)</label><div class="ctrl-row"><select id="styleSelect"></select><button type="button" class="lock-btn" id="lock-style" onclick="toggleLock(\'style\')">🔓</button></div>' +
+      '<div id="guitarTipBox" class="tone-tip"></div>' +
+      '<label>Mesures</label><select id="pg-bars"><option value="4">4 mesures</option><option value="8" selected>8 mesures</option><option value="12">12 mesures</option><option value="16">16 mesures</option></select>' +
+      '<div style="margin-top:12px;"><button type="button" class="btn" onclick="genProg(false)">✨ Générer</button> <button type="button" class="btn btn-rand" onclick="genProg(true)">🎲 Aléatoire</button> <button type="button" class="btn btn-sec" onclick="saveFav()">⭐ Sauvegarder</button> <button type="button" class="btn btn-sec" onclick="window.print()">🖨 Imprimer</button></div>';
+  }
+  var eBox = document.getElementById('exo-controls');
+  if (eBox) {
+    var ths = new Array("Fingerpicking","Hybrid Picking","Bends & Vibrato","Double-Stops","Harmoniques","Voicings & Slap","Legato & Tapping","Sweep & Arpèges","Cocottes & Funk 16e","Octaves & Jazz","Aller-Retour (Alternate)","Slide & Open Tuning"), tOpt = '';
+    for (var j = 0; j < ths.length; j++) tOpt += '<option value="' + ths.slice(j).shift() + '">' + ths.slice(j).shift() + '</option>';
+    eBox.innerHTML =
+      '<label>Instrument</label><select id="ex-inst"><option value="Stratocaster">Fender Stratocaster</option><option value="Les Paul">Gibson Les Paul</option><option value="Acoustique">Acoustique Folk</option></select>' +
+      '<label>Niveau</label><select id="ex-lvl"><option value="Débutant">Débutant</option><option value="Intermédiaire">Intermédiaire</option><option value="Avancé">Avancé</option></select>' +
+      '<label>Thème Technique (12 études)</label><select id="ex-theme">' + tOpt + '</select>' +
+      '<div style="margin-top:12px;"><button type="button" class="btn" onclick="genExo(false)">✨ Générer</button> <button type="button" class="btn btn-rand" onclick="genExo(true)">🎲 Aléatoire</button> <button type="button" class="btn btn-sec" onclick="saveFav()">⭐ Sauvegarder</button> <button type="button" class="btn btn-sec" onclick="window.print()">🖨 Imprimer</button></div>';
+  }
+  var sel = document.getElementById('styleSelect');
+  if (sel) {
+    var keys = Object.keys(PATS);
+    for (var k = 0; k < keys.length; k++) {
+      var key = keys.slice(k).shift(), opt = document.createElement('option');
+      opt.value = key; opt.textContent = (k + 1) + '. ' + PATS[key].name;
+      sel.appendChild(opt);
+    }
+    updateGuitarTip();
+  }
+}
+
+window.onresize = function() { if (document.getElementById("p-prog").className.indexOf("active") !== -1) genProg(false); };
+buildAllUI();
 initTunerUI();
 renderFavs();
 genProg(false);
