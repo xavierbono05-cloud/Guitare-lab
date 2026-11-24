@@ -280,7 +280,24 @@ function genExo(rnd) {
     '<div class="chord-box"><small>Accord Tonique</small><strong>' + rootNote + qualExo + '</strong><div style="font-size:12px;">' + c1F + '</div><span class="deg d-R">R:' + an1.R + '</span><span class="deg d-3">3:' + an1.T + '</span><span class="deg d-5">5:' + an1.Q + '</span></div>' +
     '<div class="chord-box"><small>Accord Relance</small><strong>' + fifthNote + '7</strong><div style="font-size:12px;">' + c2F + '</div><span class="deg d-R">R:' + an2.R + '</span><span class="deg d-3">3:' + an2.T + '</span><span class="deg d-5">5:' + an2.Q + '</span></div>';
 
-  var tab = "Mes. 1           | Mes. 2 (+2)      | Mes. 3 (+3)      | Mes. 4 (Résol.)\n" + eL + "\n" + bL + "\n" + gL + "\n" + dL + "\n" + aL + "\n" + EL;
+   var rawArr = new Array(eL, bL, gL, dL, aL, EL);
+  var barsSplit = rawArr.map(function(ln) { return ln.split("|"); });
+  var aligned = new Array("", "", "", "", "", "");
+  for (var col = 0; col < 5; col++) {
+    var maxLen = 0;
+    for (var r = 0; r < 6; r++) {
+      var seg = barsSplit.slice(r).shift().slice(col).shift() || "";
+      if (seg.length > maxLen) maxLen = seg.length;
+    }
+    for (var r2 = 0; r2 < 6; r2++) {
+      var s2 = barsSplit.slice(r2).shift().slice(col).shift() || "";
+      while (s2.length < maxLen) s2 += "-";
+      var prev = aligned.slice(r2).shift();
+      aligned.splice(r2, 1, prev + s2 + (col < 4 ? "|" : ""));
+    }
+  }
+  var tab = "Mes. 1           | Mes. 2 (+2)      | Mes. 3 (+3)      | Mes. 4 (Résol.)\n" + aligned.join("\n");
+
   curItem = {title: th + " en Pos. " + f + " (" + exoBpm + " BPM)", meta: inst + " • " + lvl + " • " + exoBpm + " BPM", tab: tab, tip: tip};
   document.getElementById("exo-res").innerHTML =
     '<div class="card"><span class="badge">' + th + '</span><span class="badge">' + inst + '</span><span class="badge">' + lvl + '</span><span class="badge">' + exoBpm + ' BPM</span>' +
