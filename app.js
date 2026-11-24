@@ -62,23 +62,58 @@ function buildDynamicKey(kName, modeKey) {
   var blues = new Array(0,3,5,6,7,10).map(function(s){ return scaleArr.slice((rIdx+s)%12).shift(); });
   return { r: kName, ch: chMap, blues: blues, modeLabel: mObj.label, scaleNotes: scaleNotes };
 }
-function buildFullWidthTab(chords, lvl) {
+function buildFullWidthTab(chords, lvl, groove) {
   var w = window.innerWidth || 768, perRow = (w >= 680) ? 4 : 2;
-  var charsPerBar = Math.max(12, Math.floor(((w - 65) / 7.8 - perRow - 2) / perRow)), dash = "";
+  var charsPerBar = Math.max(14, Math.floor(((w - 65) / 7.8 - perRow - 2) / perRow)), dash = "";
   for (var d = 0; d < charsPerBar; d++) dash += "-";
   var strNames = new Array("e|","B|","G|","D|","A|","E|"), blocks = new Array();
+  var grv = groove || 'rock';
+
   for (var i = 0; i < chords.length; i++) {
     var c = chords.slice(i).shift(), p = c.f.split("-");
     var e6 = p.slice(0,1).pop(), a5 = p.slice(1,2).pop(), d4 = p.slice(2,3).pop(), g3 = p.slice(3,4).pop(), b2 = p.slice(4,5).pop(), e1 = p.slice(5,6).pop();
-    var bStr = (e6 !== "x") ? 5 : 4, bVal = (e6 !== "x") ? e6 : a5, col = new Array(dash, dash, dash, dash, dash, dash);
+    var bStr = (e6 !== "x") ? 5 : 4, bVal = (e6 !== "x") ? e6 : a5;
+    var altStr = (bStr === 5 && a5 !== "x") ? 4 : 3, altVal = (bStr === 5 && a5 !== "x") ? a5 : d4;
+    var col = new Array(dash, dash, dash, dash, dash, dash);
+
     function put(row, ratio, val) {
       if (!val || val === "x") return;
       var pos = Math.max(1, Math.min(charsPerBar - val.length - 1, Math.floor(charsPerBar * ratio)));
       var s = col.slice(row).shift();
       col.splice(row, 1, s.substring(0, pos) + val + s.substring(pos + val.length));
     }
-    put(bStr, 0.05, bVal); put(3, 0.25, d4); put(2, 0.45, g3); put(1, 0.65, b2);
-    if (lvl !== "Débutant") put(0, 0.82, e1);
+
+    if (grv === 'bossa') {
+      put(bStr, 0.05, bVal); put(3, 0.22, d4); put(2, 0.22, g3); put(1, 0.22, b2);
+      put(altStr, 0.48, altVal); put(3, 0.65, d4); put(2, 0.65, g3); put(1, 0.65, b2);
+      if (lvl !== "Débutant") put(0, 0.85, e1);
+    } else if (grv === 'funk') {
+      put(2, 0.08, g3); put(1, 0.08, b2); put(0, 0.08, e1);
+      put(2, 0.28, "x"); put(1, 0.28, "x");
+      put(2, 0.48, g3); put(1, 0.48, b2); put(0, 0.48, e1);
+      put(2, 0.68, "x"); put(1, 0.68, "x");
+      if (lvl !== "Débutant") { put(2, 0.84, g3); put(1, 0.84, b2); }
+    } else if (grv === 'jazz') {
+      put(bStr, 0.05, bVal);
+      put(3, 0.25, d4); put(2, 0.42, g3); put(1, 0.58, b2);
+      if (lvl !== "Débutant") put(0, 0.72, e1);
+      put(2, 0.86, g3);
+    } else if (grv === 'reggae') {
+      put(2, 0.28, g3); put(1, 0.28, b2); put(0, 0.28, e1);
+      put(2, 0.72, g3); put(1, 0.72, b2); put(0, 0.72, e1);
+    } else {
+      // Motif créatif alternant arpège brisé (mesures impaires) et plaqué rythmique (mesures paires)
+      if (i % 2 === 0) {
+        put(bStr, 0.05, bVal); put(2, 0.24, g3); put(1, 0.42, b2);
+        put(altStr, 0.60, altVal);
+        if (lvl !== "Débutant") put(0, 0.78, e1); else put(2, 0.78, g3);
+      } else {
+        put(bStr, 0.05, bVal);
+        put(3, 0.28, d4); put(2, 0.28, g3); put(1, 0.28, b2);
+        put(altStr, 0.55, altVal);
+        put(2, 0.76, g3); put(1, 0.76, b2);
+      }
+    }
     blocks.push({name: c.n, lines: col});
   }
   var out = "";
@@ -163,7 +198,8 @@ function genProg(rnd) {
       cHtml += '<div class="chord-box"><small>Degré '+deg+'</small><strong>'+c.n+'</strong><div style="font-size:12px;">'+c.f+'</div><span class="deg d-R">R:'+an.R+'</span><span class="deg d-3">3:'+an.T+'</span><span class="deg d-5">5:'+an.Q+'</span><span class="deg d-7">7:'+an.S+'</span></div>';
     }
   }
-  var tab = buildFullWidthTab(chObjs, lvlLabel);
+ var tab = buildFullWidthTab(chObjs, lvlLabel, patObj.groove);
+
   curItem = {title: patObj.name + ' en ' + k + ' (' + bars + ' mes.)', meta: gObj.name + ' • ' + kd.modeLabel + ' • ' + lvlLabel, tab: tab, tip: gObj.tip};
   var h = '<div class="card"><span class="badge">'+patObj.name+'</span><span class="badge">'+kd.modeLabel+'</span><span class="badge">'+bars+' mes.</span><span class="badge">'+gObj.name+'</span><h2>'+patObj.name+' ('+k+' — '+kd.modeLabel+')</h2>';
   h += '<h3>1. Accords & Notes Cibles</h3><div>'+cHtml+'</div><h3>2. Tablature Complète ('+bars+' Mesures)</h3><div class="tab">'+tab+'</div>';
@@ -224,10 +260,35 @@ function genExo(rnd) {
       eL+="---"+(f2+sh)+"--x--"+(f4+sh)+"--x-|"; bL+="---"+(f2+sh)+"--x--"+(f3+sh)+"--x-|"; gL+="---"+(f+sh)+"---x--"+(f2+sh)+"--x-|"; dL+="-----------------|"; aL+="-"+(f+sh)+"-------"+(f+sh)+"-----|"; EL+="-----------------|";
     }
   }
+   var exoBpm = (lvl === "Débutant") ? 70 : (lvl === "Intermédiaire" ? 90 : 115);
+  if (typeof aMode !== 'undefined' && !aMode) {
+    bpm = exoBpm;
+    var bLbl = document.getElementById("bpm-lbl");
+    if (bLbl) bLbl.textContent = bpm + " BPM";
+  }
+  var rootNote = NOTES.slice((4 + f) % 12).shift();
+  var fifthNote = NOTES.slice((4 + f + 7) % 12).shift();
+  var qualExo = (th === "Bends & Vibrato" || th === "Double-Stops" || th === "Slide & Open Tuning") ? "7" : "m7";
+  var c1F = getVariedChordShape(rootNote, qualExo, false);
+  var c2F = getVariedChordShape(fifthNote, "7", true);
+  var an1 = anatomy(rootNote + qualExo), an2 = anatomy(fifthNote + "7");
+  curProgRoots = new Array(norm(rootNote), norm(fifthNote));
+
+  var chordCards =
+    '<div class="chord-box"><small>Accord Tonique</small><strong>' + rootNote + qualExo + '</strong><div style="font-size:12px;">' + c1F + '</div><span class="deg d-R">R:' + an1.R + '</span><span class="deg d-3">3:' + an1.T + '</span><span class="deg d-5">5:' + an1.Q + '</span></div>' +
+    '<div class="chord-box"><small>Accord Relance</small><strong>' + fifthNote + '7</strong><div style="font-size:12px;">' + c2F + '</div><span class="deg d-R">R:' + an2.R + '</span><span class="deg d-3">3:' + an2.T + '</span><span class="deg d-5">5:' + an2.Q + '</span></div>';
+
   var tab = "Mes. 1           | Mes. 2 (+2)      | Mes. 3 (+3)      | Mes. 4 (Résol.)\n" + eL + "\n" + bL + "\n" + gL + "\n" + dL + "\n" + aL + "\n" + EL;
-  curItem = {title: th + " en Pos. " + f, meta: inst + " • " + lvl + " • " + bpmEx, tab: tab, tip: tip};
-  document.getElementById("exo-res").innerHTML = '<div class="card"><span class="badge">'+th+'</span><span class="badge">'+inst+'</span><span class="badge">'+lvl+'</span><span class="badge">'+bpmEx+'</span><h2>'+th+' — Étude Complète 4 Mesures (Pos. '+f+')</h2><p style="font-size:12px;color:#38bdf8;margin:4px 0 8px 0;">🖐️ '+fing+'</p><div class="tab">'+tab+'</div><div class="tone-tip">💡 '+tip+'</div></div>';
+  curItem = {title: th + " en Pos. " + f + " (" + exoBpm + " BPM)", meta: inst + " • " + lvl + " • " + exoBpm + " BPM", tab: tab, tip: tip};
+  document.getElementById("exo-res").innerHTML =
+    '<div class="card"><span class="badge">' + th + '</span><span class="badge">' + inst + '</span><span class="badge">' + lvl + '</span><span class="badge">' + exoBpm + ' BPM</span>' +
+    '<h2>' + th + ' — Étude Complète 4 Mesures (Pos. ' + f + ')</h2>' +
+    '<h3>1. Accords d\'Accompagnement (Tonalité de ' + rootNote + ')</h3><div>' + chordCards + '</div>' +
+    '<p style="font-size:12px;color:#0284c7;font-weight:bold;margin:8px 0;">🖐️ ' + fing + '</p>' +
+    '<h3>2. Tablature de l\'Étude</h3><div class="tab">' + tab + '</div>' +
+    '<div class="tone-tip">💡 ' + tip + '</div></div>';
 }
+
 
 var aCtx = null, aMode = null, aInt = null, bpm = 90, step = 0, sInt = null, refOsc = null, tunAnim = null;
 function initACtx() { if (!aCtx) aCtx = new (window.AudioContext || window.webkitAudioContext)(); if (aCtx.state === 'suspended') aCtx.resume(); }
