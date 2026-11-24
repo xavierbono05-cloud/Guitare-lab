@@ -5,15 +5,16 @@ var lastProgState = null, progBpm = 90, exoBpm = 85;
 try { favs = JSON.parse(localStorage.getItem("glab_f") || "[]"); } catch(e) {}
 
 function pickRandom(arr) { return arr.slice(Math.floor(Math.random() * arr.length)).shift(); }
-  if (!aMode) { bpm = (id === 'exo') ? exoBpm : progBpm; document.getElementById("bpm-lbl").textContent = bpm + " BPM"; }
 function goTab(id, el) {
   var p = document.getElementsByClassName("panel");
   for (var i = 0; i < p.length; i++) p.item(i).className = "panel";
   document.getElementById("p-" + id).className = "panel active";
   var b = document.getElementsByClassName("nav-btn");
   for (var j = 0; j < b.length; j++) b.item(j).className = "nav-btn";
+  if (!aMode) { bpm = (id === 'exo') ? exoBpm : progBpm; document.getElementById("bpm-lbl").textContent = bpm + " BPM"; }
   if (el) el.className = "nav-btn active";
 }
+
 function toggleLock(part) {
   LOCKS[part] = !LOCKS[part];
   var btn = document.getElementById('lock-' + part);
