@@ -171,6 +171,10 @@
   <div class="nav-btn" onclick="goTab('fav', this)">⭐ Favoris</div>
 </nav>
 <script>
+ window.onerror = function(msg, url, line) {
+  alert("Erreur ligne " + line + " : " + msg);
+};
+
 var var NOTES = new Array("C","C#","D","D#","E","F","F#","G","G#","A","A#","B");
 var NOTES_SHARP = new Array("C","C#","D","D#","E","F","F#","G","G#","A","A#","B");
 var NOTES_FLAT = new Array("C","Db","D","Eb","E","F","Gb","G","Ab","A","Bb","B");
