@@ -260,6 +260,27 @@ function buildFretboard(title, scaleNotes, tonic) {
   svg += '</svg>';
   return '<div style="background:#0f172a;padding:10px;border-radius:10px;margin-bottom:10px;border:1px solid #334155;"><div style="font-size:13px;font-weight:bold;color:#38bdf8;margin-bottom:6px;">' + title + '</div><div style="overflow-x:auto;">' + svg + '</div></div>';
 }
+function getVariedChordShape(rootNote, qual, altPos) {
+  var rIdx = NOTES.indexOf(norm(rootNote));
+  if (rIdx < 0) rIdx = 0;
+  var rE = (rIdx - 4 + 12) % 12, rA = (rIdx - 9 + 12) % 12;
+  if (qual === 'm7b5') return 'x-' + (rA || 12) + '-' + ((rA || 12) + 1) + '-' + (rA || 12) + '-' + ((rA || 12) + 1) + '-x';
+  if (qual === 'dim7') return 'x-' + (rA || 12) + '-' + ((rA || 12) + 1) + '-' + ((rA || 12) - 1) + '-' + ((rA || 12) + 1) + '-x';
+  var useE = altPos ? (rE <= 7) : (rE <= 4);
+  if (useE) {
+    if (qual === 'maj7') return rE + '-x-' + (rE + 1) + '-' + (rE + 1) + '-' + rE + '-x';
+    if (qual === 'm7') return rE + '-x-' + rE + '-' + rE + '-' + rE + '-x';
+    if (qual === '7') return rE + '-x-' + rE + '-' + (rE + 1) + '-' + rE + '-x';
+    if (qual === 'mMaj7') return rE + '-x-' + (rE + 1) + '-' + rE + '-' + rE + '-x';
+    return rE + '-x-' + (rE + 1) + '-' + (rE + 1) + '-' + (rE + 1) + '-x';
+  }
+  if (qual === 'maj7') return 'x-' + rA + '-' + (rA + 2) + '-' + (rA + 1) + '-' + (rA + 2) + '-' + rA;
+  if (qual === 'm7') return 'x-' + rA + '-' + (rA + 2) + '-' + rA + '-' + (rA + 1) + '-' + rA;
+  if (qual === '7') return 'x-' + rA + '-' + (rA + 2) + '-' + rA + '-' + (rA + 2) + '-' + rA;
+  if (qual === 'mMaj7') return 'x-' + rA + '-' + (rA + 2) + '-' + (rA + 1) + '-' + (rA + 1) + '-' + rA;
+  return 'x-' + rA + '-' + (rA + 3) + '-' + (rA + 1) + '-' + (rA + 1) + '-x';
+}
+
 function genProg(rnd) {
   if (rnd) {
     if (!LOCKS.style) document.getElementById('styleSelect').value = pickRandom(Object.keys(PATS));
@@ -271,6 +292,54 @@ function genProg(rnd) {
       document.getElementById('modeSelect').value = LOCKS.style ? 'auto' : pickRandom(new Array('auto', 'major', 'minor', 'blues', 'modal'));
     }
   }
+  updateGuitarTip();
+  var k = document.getElementById('keySelect').value, mSel = document.getElementById('modeSelect').value;
+  var stKey = document.getElementById('styleSelect').value, instKey = document.getElementById('instSelect').value;
+  var lvlVal = document.getElementById('lvlSelect').value, lvlLabel = lvlVal === 'deb' ? 'Débutant' : (lvlVal === 'int' ? 'Intermédiaire' : 'Avancé');
+  var bars = parseInt((document.getElementById('pg-bars') || {value:8}).value, 10) || 8;
+  var patObj = PATS[stKey] || PATS.emmanuel;
+  if (patObj.bpm && typeof aMode !== 'undefined' && !aMode) { bpm = patObj.bpm; document.getElementById("bpm-lbl").textContent = bpm + " BPM"; }
+  var activeMode = (mSel === 'auto') ? patObj.mode : (mSel === 'major' ? 'ionian' : (mSel === 'minor' ? 'aeolian' : (mSel === 'modal' ? 'dorian' : 'blues')));
+  var kd = buildDynamicKey(k, activeMode), gObj = GUITARS[instKey] || GUITARS.strat;
+
+  // Variantes harmoniques réelles à chaque clic sur Générer
+  var baseDegs = patObj.deg.slice(0);
+  var variants = new Array(
+    baseDegs,
+    new Array(baseDegs.slice(0).shift(), 6, 2, 5),
+    new Array(baseDegs.slice(0).shift(), 4, 6, 5),
+    new Array(baseDegs.slice(0).shift(), 3, 4, 5),
+    new Array(2, 5, baseDegs.slice(0).shift(), 6)
+  );
+  var chosenSeq = pickRandom(variants);
+  var altPos = Math.random() > 0.5;
+
+  var cHtml = '', chObjs = new Array(), seen = {};
+  curProgRoots = new Array();
+  for (var b = 0; b < bars; b++) {
+    var deg = String(chosenSeq.slice(b % chosenSeq.length).shift());
+    var baseC = kd.ch[deg] || kd.ch['1'];
+    var rn = baseC.n.match(/^[A-G][#b]?/).toString();
+    var qual = baseC.n.replace(rn, '');
+    var rawF = getVariedChordShape(rn, qual, altPos);
+    var shiftedF = rawF.split('-').map(function(v) { return (v === 'x') ? 'x' : String(parseInt(v, 10) + gObj.shift); }).join('-');
+    var c = { n: baseC.n, f: shiftedF }, an = anatomy(c.n);
+    chObjs.push(c); curProgRoots.push(norm(an.R));
+    if (!seen[deg]) {
+      seen[deg] = true;
+      cHtml += '<div class="chord-box"><small>Degré '+deg+'</small><strong>'+c.n+'</strong><div style="font-size:12px;">'+c.f+'</div><span class="deg d-R">R:'+an.R+'</span><span class="deg d-3">3:'+an.T+'</span><span class="deg d-5">5:'+an.Q+'</span><span class="deg d-7">7:'+an.S+'</span></div>';
+    }
+  }
+  var tab = buildFullWidthTab(chObjs, lvlLabel);
+  curItem = {title: patObj.name + ' en ' + k + ' (' + bars + ' mes.)', meta: gObj.name + ' • ' + kd.modeLabel + ' • ' + lvlLabel, tab: tab, tip: gObj.tip};
+  var h = '<div class="card"><span class="badge">'+patObj.name+'</span><span class="badge">'+kd.modeLabel+'</span><span class="badge">'+bars+' mes.</span><span class="badge">'+gObj.name+'</span><h2>'+patObj.name+' ('+k+' — '+kd.modeLabel+')</h2>';
+  h += '<h3>1. Accords & Notes Cibles</h3><div>'+cHtml+'</div><h3>2. Tablature Complète ('+bars+' Mesures)</h3><div class="tab">'+tab+'</div>';
+  h += buildFretboard('Gamme : ' + k + ' ' + kd.modeLabel, kd.scaleNotes, k);
+  h += buildFretboard('Pentatonique / Blues de ' + k, kd.blues, k);
+  h += '<div class="tone-tip">🎸 <strong>Réglage '+gObj.name+' :</strong> '+gObj.tip+'</div></div>';
+  document.getElementById('prog-res').innerHTML = h;
+}
+
   updateGuitarTip();
   var k = document.getElementById('keySelect').value, mSel = document.getElementById('modeSelect').value;
   var stKey = document.getElementById('styleSelect').value, instKey = document.getElementById('instSelect').value;
