@@ -335,7 +335,11 @@ function genExo(rnd) {
     }
   }
   var tab = "Mes. 1           | Mes. 2 (+2)      | Mes. 3 (+3)      | Mes. 4 (Résol.)\n" + eL + "\n" + bL + "\n" + gL + "\n" + dL + "\n" + aL + "\n" + EL;
-var aCtx = null, aMode = null, aInt = null, bpm = 90, step = 0, sInt = null, refOsc = null, tunAnim = null;
+  curItem = {title: th + " en Pos. " + f, meta: inst + " • " + lvl + " • " + bpmEx, tab: tab, tip: tip};
+  document.getElementById("exo-res").innerHTML = '<div class="card"><span class="badge">'+th+'</span><span class="badge">'+inst+'</span><span class="badge">'+lvl+'</span><span class="badge">'+bpmEx+'</span><h2>'+th+' — Étude Complète 4 Mesures (Pos. '+f+')</h2><p style="font-size:12px;color:#38bdf8;margin:4px 0 8px 0;">🖐️ '+fing+'</p><div class="tab">'+tab+'</div><div class="tone-tip">💡 '+tip+'</div></div>';
+}
+
+ var aCtx = null, aMode = null, aInt = null, bpm = 90, step = 0, sInt = null, refOsc = null, tunAnim = null;
 function initACtx() { if (!aCtx) aCtx = new (window.AudioContext || window.webkitAudioContext)(); if (aCtx.state === 'suspended') aCtx.resume(); }
 function chgBpm(d) { bpm = Math.max(40, Math.min(200, bpm + d)); document.getElementById("bpm-lbl").textContent = bpm + " BPM"; if (aMode) { var m = aMode; stopAudio(); toggleAudio(m); } }
 function stopAudio() { clearInterval(aInt); aInt = null; aMode = null; document.getElementById("btn-play").textContent = "▶ Basse+Batterie"; document.getElementById("btn-drum").textContent = "🥁 Batterie"; document.getElementById("btn-met").textContent = "⏱ Métro"; }
@@ -511,7 +515,7 @@ function buildAllUI() {
     updateGuitarTip();
   }
 }
-}
+
 window.onresize = function() { if (document.getElementById("p-prog").className.indexOf("active") !== -1) genProg(false); };
 buildAllUI();
 initTunerUI();
