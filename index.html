@@ -310,8 +310,9 @@ function randomizeSmart() {
     document.getElementById('keySelect').value = pickRandom(keyNames);
     document.getElementById('modeSelect').value = LOCKS.style ? 'auto' : pickRandom(modes);
   }
-  updateGuitarTip();
-if (typeof genProg === 'function') genProg(false);
+   updateGuitarTip();
+  if (typeof genProg === 'function') genProg(false);
+}
 
 var EXOS = [
   {th:"Fingerpicking",st:"Tommy Emmanuel",t:"Moteur Boum-Tchak & Mélodie",bpm:"65-85 BPM",tab:"e|-------0-----------0---|-------3-----------3---|\nB|-----1-----------1-----|-----0-----------0-----|\nG|-------------0---------|-------------0---------|\nD|-----2-----------2-----|-----0-----------0-----|\nA|-3-------3-------------|-----------------------|\nE|-----------------------|-3-------3-------------|",tip:"Pouce régulier sur 1-2-3-4 en Palm Mute léger."},
