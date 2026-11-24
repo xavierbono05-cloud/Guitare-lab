@@ -479,17 +479,17 @@ function renderFavs() {
   }
   document.getElementById("fav-list").innerHTML = h || '<div class="card"><p>Aucun favori enregistré.</p></div>';
 }
- }
+
 function buildAllUI() {
   var pBox = document.getElementById('prog-controls');
   if (pBox) {
     var ks = new Array('C','Db','D','Eb','E','F','Gb','G','Ab','A','Bb','B'), kOpt = '';
     for (var i = 0; i < ks.length; i++) kOpt += '<option value="' + ks.slice(i).shift() + '">' + ks.slice(i).shift() + '</option>';
-    pBox.innerHTML =
-      '<label>Guitare</label><div class="ctrl-row"><select id="instSelect" onchange="updateGuitarTip()"><option value="strat">Fender Stratocaster</option><option value="lespaul">Gibson Les Paul</option><option value="acoustic">Acoustique Folk</option><option value="nylon">Guitare Nylon</option></select><button type="button" class="lock-btn" id="lock-inst" onclick="toggleLock(\'inst\')">🔓</button></div>' +
-      '<label>Niveau</label><div class="ctrl-row"><select id="lvlSelect"><option value="deb">Débutant</option><option value="int">Intermédiaire</option><option value="adv">Avancé</option></select><button type="button" class="lock-btn" id="lock-lvl" onclick="toggleLock(\'lvl\')">🔓</button></div>' +
-      '<label>Tonalité & Mode</label><div class="ctrl-row"><select id="keySelect">' + kOpt + '</select><select id="modeSelect"><option value="auto">Mode du Style (Auto)</option><option value="major">Majeur</option><option value="minor">Mineur</option><option value="blues">Blues</option><option value="modal">Modal</option></select><button type="button" class="lock-btn" id="lock-key" onclick="toggleLock(\'key\')">🔓</button></div>' +
-      '<label>Style & Artiste (32 réf.)</label><div class="ctrl-row"><select id="styleSelect"></select><button type="button" class="lock-btn" id="lock-style" onclick="toggleLock(\'style\')">🔓</button></div>' +
+        pBox.innerHTML =
+      '<label>Guitare</label><div class="ctrl-row"><select id="instSelect" onchange="updateGuitarTip()"><option value="strat">Fender Stratocaster</option><option value="lespaul">Gibson Les Paul</option><option value="acoustic">Acoustique Folk</option><option value="nylon">Guitare Nylon</option></select><button type="button" class="lock-btn" id="lock-inst" onclick="toggleLock(this.id.slice(5))">🔓</button></div>' +
+      '<label>Niveau</label><div class="ctrl-row"><select id="lvlSelect"><option value="deb">Débutant</option><option value="int">Intermédiaire</option><option value="adv">Avancé</option></select><button type="button" class="lock-btn" id="lock-lvl" onclick="toggleLock(this.id.slice(5))">🔓</button></div>' +
+      '<label>Tonalité & Mode</label><div class="ctrl-row"><select id="keySelect">' + kOpt + '</select><select id="modeSelect"><option value="auto">Mode du Style (Auto)</option><option value="major">Majeur</option><option value="minor">Mineur</option><option value="blues">Blues</option><option value="modal">Modal</option></select><button type="button" class="lock-btn" id="lock-key" onclick="toggleLock(this.id.slice(5))">🔓</button></div>' +
+      '<label>Style & Artiste (32 réf.)</label><div class="ctrl-row"><select id="styleSelect"></select><button type="button" class="lock-btn" id="lock-style" onclick="toggleLock(this.id.slice(5))">🔓</button></div>' +
       '<div id="guitarTipBox" class="tone-tip"></div>' +
       '<label>Mesures</label><select id="pg-bars"><option value="4">4 mesures</option><option value="8" selected>8 mesures</option><option value="12">12 mesures</option><option value="16">16 mesures</option></select>' +
       '<div style="margin-top:12px;"><button type="button" class="btn" onclick="genProg(false)">✨ Générer</button> <button type="button" class="btn btn-rand" onclick="genProg(true)">🎲 Aléatoire</button> <button type="button" class="btn btn-sec" onclick="saveFav()">⭐ Sauvegarder</button> <button type="button" class="btn btn-sec" onclick="window.print()">🖨 Imprimer</button></div>';
