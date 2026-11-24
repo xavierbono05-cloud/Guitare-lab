@@ -758,7 +758,7 @@ function renderFavs() {
   document.getElementById("fav-list").innerHTML = h || '<div class="card"><p>Aucun favori enregistré.</p></div>';
 }
 window.onresize = function() { if (document.getElementById("p-prog").className.indexOf("active") !== -1) genProg(false); };
-}
+
 initStyleMenu();
 initTunerUI();
 renderFavs();
